@@ -69,11 +69,18 @@ button{font:inherit;color:inherit}
 .results .empty{color:var(--muted);cursor:default;padding:14px 10px}
 .results .empty:hover{background:none}
 
-.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 24px 2px 2px;margin:-2px;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent);scroll-behavior:smooth}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex:none;height:36px;padding:0 14px;border-radius:999px;border:0;background:var(--surface);box-shadow:var(--shadow-sm);font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
-.chip:hover{background:var(--surface-2)}
+.filters{background:var(--surface);border-radius:14px;box-shadow:var(--shadow-lg);padding:8px}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.chip{min-height:38px;padding:6px 8px;border-radius:9px;border:0;background:var(--surface-2);font-size:13px;font-weight:500;line-height:1.2;cursor:pointer;text-align:center;transition:background .15s,color .15s}
+.chip:hover{background:var(--line)}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.chip.extra{display:none}
+.chips.expanded .chip.extra{display:block}
+.more{display:flex;align-items:center;justify-content:center;gap:4px;width:100%;margin-top:6px;height:30px;border:0;background:none;border-radius:8px;font-size:12.5px;font-weight:500;color:var(--muted);cursor:pointer}
+.more:hover{color:var(--ink);background:var(--surface-2)}
+.more svg{width:15px;height:15px;transition:transform .2s}
+.more[aria-expanded="true"] svg{transform:rotate(180deg)}
+.chips.expanded{max-height:46vh;overflow-y:auto}
 .count{font-size:13px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7);padding-left:4px}
 
 /* ---------- Steuerung (unten rechts) ---------- */
@@ -171,7 +178,10 @@ body.panel-open .panel{transform:none}
     </div>
     <ul class="results" id="results" role="listbox"></ul>
   </div>
-  <div class="chips" id="chips" role="toolbar" aria-label="Sammlungen"></div>
+  <div class="filters">
+    <div class="chips" id="chips" role="toolbar" aria-label="Filmreihen"></div>
+    <button class="more" id="more" aria-expanded="false" aria-controls="chips"><span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+  </div>
   <div class="count" id="count"></div>
 </div>
 
@@ -244,9 +254,14 @@ const byId = Object.fromEntries(FILMS.map(f => [f.id, f]));
 
 const R = name => f => f.reihe === name;
 const COLLECTIONS = [
+  // Die ersten sechs sind immer sichtbar (zwei Reihen à drei)
   {id:"alle", label:"Alle Filme", test:() => true},
+  {id:"marvel", label:"Marvel", test:f => f.marke === "Marvel"},
+  {id:"dc", label:"DC", test:f => f.marke === "DC"},
   {id:"starwars", label:"Star Wars", test:R("Star Wars")},
   {id:"potter", label:"Harry Potter", test:R("Harry Potter")},
+  {id:"oscar", label:"Oscar: Bester Film", test:f => !!f.oscar},
+  // Weitere Reihen (aufklappbar)
   {id:"mittelerde", label:"Herr der Ringe & Hobbit", test:f => f.reihe === "Herr der Ringe" || f.reihe === "Der Hobbit"},
   {id:"pate", label:"Der Pate", test:R("Der Pate")},
   {id:"bond", label:"James Bond", test:R("James Bond")},
@@ -257,9 +272,11 @@ const COLLECTIONS = [
   {id:"bttf", label:"Zurück in die Zukunft", test:R("Zurück in die Zukunft")},
   {id:"jp", label:"Jurassic Park", test:R("Jurassic Park")},
   {id:"pirates", label:"Fluch der Karibik", test:R("Fluch der Karibik")},
+  {id:"hangover", label:"Hangover", test:R("Hangover")},
   {id:"bourne", label:"Bourne", test:R("Bourne")},
   {id:"before", label:"Before-Trilogie", test:R("Before-Trilogie")},
 ];
+const VISIBLE = 6;
 const REGIONS = {
   europa:[[35,-11],[66,40]],
   usa:[[25,-125],[49,-67]],
@@ -354,20 +371,26 @@ function flyToPin(p, zoom){
 // ---------------------------------------------------------------
 // Sammlungen (Chips)
 // ---------------------------------------------------------------
-COLLECTIONS.forEach(c => {
+COLLECTIONS.forEach((c, i) => {
   const b = document.createElement("button");
-  b.className = "chip"; b.textContent = c.label; b.dataset.id = c.id;
+  b.className = "chip" + (i >= VISIBLE ? " extra" : ""); b.textContent = c.label; b.dataset.id = c.id;
   b.setAttribute("aria-pressed", c === collection);
   b.onclick = () => setCollection(c, true);
   $("chips").appendChild(b);
 });
-// Chips mit dem Mausrad seitlich scrollen
-$("chips").addEventListener("wheel", e => {
-  if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { $("chips").scrollLeft += e.deltaY; e.preventDefault(); }
-}, {passive:false});
+const more = $("more");
+const extraCount = COLLECTIONS.length - VISIBLE;
+const setMore = open => {
+  $("chips").classList.toggle("expanded", open);
+  more.setAttribute("aria-expanded", open);
+  more.querySelector("span").textContent = open ? "Weniger Reihen anzeigen" : `${extraCount} weitere Reihen anzeigen`;
+};
+more.onclick = () => setMore(more.getAttribute("aria-expanded") !== "true");
+setMore(false);
 function setCollection(c, fit){
   collection = c; filmOnly = null; closePanel(false);
   document.querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", b.dataset.id === c.id));
+  if (COLLECTIONS.indexOf(c) >= VISIBLE) setMore(true);
   const pins = applyFilter();
   if (fit) c.id === "alle" ? map.flyTo([38, -30], 2.75, {duration:1.1}) : fitPins(pins, 8);
 }

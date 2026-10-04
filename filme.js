@@ -3,10 +3,11 @@
 // Neuer Film: einen Eintrag kopieren und anpassen.
 // Koordinaten: Rechtsklick auf den Ort in Google Maps -> Zahlen kopieren.
 // Pflicht: title, year, places (name, country, lat, lon, scene)
-// Optional: genre, regie, cast, beschreibung, reihe (z. B. "Star Wars"), color
+// Optional: genre, regie, cast, beschreibung, color,
+//   reihe (z. B. "Star Wars"), marke ("Marvel"/"DC"), oscar (true = Oscar als bester Film)
 // ===============================================================
 const FILMS = [
- {title:"The Sound of Music", year:1965, genre:"Musical", regie:"Robert Wise", cast:"Julie Andrews, Christopher Plummer",
+ {title:"The Sound of Music", year:1965, genre:"Musical", regie:"Robert Wise", cast:"Julie Andrews, Christopher Plummer", oscar:true,
   beschreibung:"Die junge Novizin Maria wird Kindermädchen bei der Familie des verwitweten Kapitäns von Trapp in Salzburg und bringt mit Musik wieder Leben ins strenge Haus. Als die Nationalsozialisten Österreich annektieren, muss die Familie fliehen.",
   places:[
    {name:"Mirabellgarten, Salzburg", country:"Österreich", lat:47.8059, lon:13.0418,
@@ -154,7 +155,7 @@ const FILMS = [
    {name:"Westbourne Park Road, London", country:"Vereinigtes Königreich", lat:51.5161, lon:-0.2054,
     scene:"Das Haus mit der blauen Tür, in dem William wohnt."}
   ]},
- {title:"Braveheart", year:1995, genre:"Historienfilm", regie:"Mel Gibson", cast:"Mel Gibson, Sophie Marceau",
+ {title:"Braveheart", year:1995, genre:"Historienfilm", regie:"Mel Gibson", cast:"Mel Gibson, Sophie Marceau", oscar:true,
   beschreibung:"Im 13. Jahrhundert führt William Wallace die Schotten in einen Aufstand gegen die englische Herrschaft.",
   places:[
    {name:"Glen Nevis, Schottland", country:"Vereinigtes Königreich", lat:56.793, lon:-5.08,
@@ -194,7 +195,7 @@ const FILMS = [
    {name:"Crema, Lombardei", country:"Italien", lat:45.3638, lon:9.6847,
     scene:"Die Kleinstadt, in der Elio und Oliver ihren Sommer verbringen."}
   ]},
- {title:"Amadeus", year:1984, genre:"Historienfilm, Drama", regie:"Miloš Forman", cast:"F. Murray Abraham, Tom Hulce",
+ {title:"Amadeus", year:1984, genre:"Historienfilm, Drama", regie:"Miloš Forman", cast:"F. Murray Abraham, Tom Hulce", oscar:true,
   beschreibung:"Der Hofkomponist Antonio Salieri erzählt, wie er am Genie des jungen Mozart verzweifelte und ihn aus Neid zu zerstören versuchte.",
   places:[
    {name:"Ständetheater, Prag", country:"Tschechien", lat:50.0862, lon:14.4235,
@@ -234,7 +235,7 @@ const FILMS = [
    {name:"Preikestolen", country:"Norwegen", lat:58.9864, lon:6.1903,
     scene:"Die Felskanzel ist Schauplatz des Helikopter-Finales."}
   ]},
- {title:"Der Pate", year:1972, reihe:"Der Pate", genre:"Mafiafilm, Drama", regie:"Francis Ford Coppola", cast:"Marlon Brando, Al Pacino, James Caan",
+ {title:"Der Pate", year:1972, reihe:"Der Pate", genre:"Mafiafilm, Drama", regie:"Francis Ford Coppola", cast:"Marlon Brando, Al Pacino, James Caan", oscar:true,
   beschreibung:"Don Vito Corleone führt eine mächtige Mafiafamilie in New York. Nach einem Attentat auf ihn wird sein jüngster Sohn Michael, der nie Teil des Geschäfts sein wollte, Schritt für Schritt zum neuen Paten. Nach einem Mord muss Michael nach Sizilien untertauchen.",
   places:[
    {name:"Bar Vitelli, Savoca", country:"Italien", lat:37.9547, lon:15.3384,
@@ -246,7 +247,7 @@ const FILMS = [
    {name:"Longfellow Avenue, Staten Island", country:"USA", lat:40.6085, lon:-74.1025,
     scene:"Die Villa der Corleones mit der Hochzeitsfeier zu Beginn."}
   ]},
- {title:"Der Pate – Teil II", year:1974, reihe:"Der Pate", genre:"Mafiafilm, Drama", regie:"Francis Ford Coppola", cast:"Al Pacino, Robert De Niro, Robert Duvall",
+ {title:"Der Pate – Teil II", year:1974, reihe:"Der Pate", genre:"Mafiafilm, Drama", regie:"Francis Ford Coppola", cast:"Al Pacino, Robert De Niro, Robert Duvall", oscar:true,
   beschreibung:"Der Film erzählt parallel zwei Geschichten: den Aufstieg des jungen Vito Corleone vom sizilianischen Waisenkind zum New Yorker Paten und Michaels Kampf, die Macht der Familie in den 1950er-Jahren zu sichern.",
   places:[
    {name:"Forza d'Agrò", country:"Italien", lat:37.9157, lon:15.336,
@@ -400,7 +401,7 @@ const FILMS = [
    {name:"Cefalù", country:"Italien", lat:38.037, lon:14.023,
     scene:"Die Freiluft-Vorführung am Hafen."}
   ]},
- {title:"Gladiator", year:2000, genre:"Historienfilm, Action", regie:"Ridley Scott", cast:"Russell Crowe, Joaquin Phoenix",
+ {title:"Gladiator", year:2000, genre:"Historienfilm, Action", regie:"Ridley Scott", cast:"Russell Crowe, Joaquin Phoenix", oscar:true,
   beschreibung:"Der römische General Maximus wird verraten, seine Familie ermordet. Als Gladiator kämpft er sich zurück nach Rom, um sich am Kaiser zu rächen.",
   places:[
    {name:"Val d'Orcia bei Pienza", country:"Italien", lat:43.0745, lon:11.665,
@@ -408,7 +409,7 @@ const FILMS = [
    {name:"Fort Ricasoli, Kalkara", country:"Malta", lat:35.897, lon:14.526,
     scene:"Hier wurde das Kolosseum für die Arenakämpfe nachgebaut."}
   ]},
- {title:"Der englische Patient", year:1996, genre:"Drama, Romantik", regie:"Anthony Minghella", cast:"Ralph Fiennes, Juliette Binoche, Kristin Scott Thomas",
+ {title:"Der englische Patient", year:1996, genre:"Drama, Romantik", regie:"Anthony Minghella", cast:"Ralph Fiennes, Juliette Binoche, Kristin Scott Thomas", oscar:true,
   beschreibung:"Eine Krankenschwester pflegt am Ende des Zweiten Weltkriegs in einem toskanischen Kloster einen schwer verbrannten Mann, dessen Liebesgeschichte sich langsam enthüllt.",
   places:[
    {name:"Kloster Sant'Anna in Camprena", country:"Italien", lat:43.12, lon:11.701,
@@ -464,7 +465,7 @@ const FILMS = [
    {name:"Wüste von Tabernas, Almería", country:"Spanien", lat:37.05, lon:-2.39,
     scene:"Die Wüste stand für den Wilden Westen – auch viele andere Western entstanden hier."}
   ]},
- {title:"Lawrence von Arabien", year:1962, genre:"Historienfilm, Abenteuer", regie:"David Lean", cast:"Peter O'Toole, Alec Guinness, Omar Sharif",
+ {title:"Lawrence von Arabien", year:1962, genre:"Historienfilm, Abenteuer", regie:"David Lean", cast:"Peter O'Toole, Alec Guinness, Omar Sharif", oscar:true,
   beschreibung:"Der britische Offizier T. E. Lawrence vereint im Ersten Weltkrieg arabische Stämme im Kampf gegen das Osmanische Reich.",
   places:[
    {name:"Plaza de España, Sevilla", country:"Spanien", lat:37.3769, lon:-5.9863,
@@ -514,7 +515,7 @@ const FILMS = [
    {name:"Siegessäule, Berlin", country:"Deutschland", lat:52.5145, lon:13.3501,
     scene:"Der Engel Damiel sitzt auf der Goldelse und blickt auf die Stadt."}
   ]},
- {title:"Schindlers Liste", year:1993, genre:"Drama, Historienfilm", regie:"Steven Spielberg", cast:"Liam Neeson, Ben Kingsley, Ralph Fiennes",
+ {title:"Schindlers Liste", year:1993, genre:"Drama, Historienfilm", regie:"Steven Spielberg", cast:"Liam Neeson, Ben Kingsley, Ralph Fiennes", oscar:true,
   beschreibung:"Der Unternehmer Oskar Schindler rettet im besetzten Polen über tausend Juden das Leben, indem er sie in seiner Fabrik beschäftigt.",
   places:[
    {name:"Schindlers Fabrik, Krakau", country:"Polen", lat:50.0475, lon:19.9614,
@@ -696,7 +697,7 @@ const FILMS = [
    {name:"Squamish, British Columbia", country:"Kanada", lat:49.7016, lon:-123.1558,
     scene:"Die Küstenstadt stand für das fiktive Nightmute in Alaska."}
   ]},
- {title:"Batman Begins", year:2005, reihe:"The Dark Knight", genre:"Action, Superheldenfilm", regie:"Christopher Nolan", cast:"Christian Bale, Michael Caine, Liam Neeson",
+ {title:"Batman Begins", year:2005, reihe:"The Dark Knight", marke:"DC", genre:"Action, Superheldenfilm", regie:"Christopher Nolan", cast:"Christian Bale, Michael Caine, Liam Neeson",
   beschreibung:"Bruce Wayne lernt im Himalaya bei einem geheimen Orden zu kämpfen und kehrt als Batman in seine Heimatstadt Gotham zurück.",
   places:[
    {name:"Svínafellsjökull", country:"Island", lat:64.008, lon:-16.875,
@@ -712,7 +713,7 @@ const FILMS = [
    {name:"Tower Theatre, Broadway, Los Angeles", country:"USA", lat:34.0446, lon:-118.2546,
     scene:"Die historischen Theater am Broadway in Los Angeles wurden zu Londoner Varietébühnen."}
   ]},
- {title:"The Dark Knight", year:2008, reihe:"The Dark Knight", genre:"Action, Superheldenfilm", regie:"Christopher Nolan", cast:"Christian Bale, Heath Ledger, Aaron Eckhart",
+ {title:"The Dark Knight", year:2008, reihe:"The Dark Knight", marke:"DC", genre:"Action, Superheldenfilm", regie:"Christopher Nolan", cast:"Christian Bale, Heath Ledger, Aaron Eckhart",
   beschreibung:"Batman, Commissioner Gordon und Staatsanwalt Harvey Dent nehmen den Kampf gegen den Joker auf, der Gotham ins Chaos stürzen will.",
   places:[
    {name:"LaSalle Street, Chicago", country:"USA", lat:41.879, lon:-87.6323,
@@ -720,7 +721,7 @@ const FILMS = [
    {name:"International Finance Centre, Hongkong", country:"Hongkong", lat:22.285, lon:114.159,
     scene:"Batman springt vom Wolkenkratzer, um Lau zu entführen."}
   ]},
- {title:"The Dark Knight Rises", year:2012, reihe:"The Dark Knight", genre:"Action, Superheldenfilm", regie:"Christopher Nolan", cast:"Christian Bale, Tom Hardy, Anne Hathaway",
+ {title:"The Dark Knight Rises", year:2012, reihe:"The Dark Knight", marke:"DC", genre:"Action, Superheldenfilm", regie:"Christopher Nolan", cast:"Christian Bale, Tom Hardy, Anne Hathaway",
   beschreibung:"Acht Jahre nach dem Joker kehrt Batman zurück, um Gotham vor dem Terroristen Bane zu retten.",
   places:[
    {name:"Heinz Field, Pittsburgh", country:"USA", lat:40.4468, lon:-80.0158,
@@ -740,7 +741,7 @@ const FILMS = [
    {name:"Opernhaus Oslo", country:"Norwegen", lat:59.9075, lon:10.7531,
     scene:"Das Dach der Oper ist der Eingang zum Zollfreilager."}
   ]},
- {title:"Oppenheimer", year:2023, genre:"Biografie, Drama", regie:"Christopher Nolan", cast:"Cillian Murphy, Emily Blunt, Robert Downey Jr.",
+ {title:"Oppenheimer", year:2023, genre:"Biografie, Drama", regie:"Christopher Nolan", cast:"Cillian Murphy, Emily Blunt, Robert Downey Jr.", oscar:true,
   beschreibung:"Die Geschichte des Physikers J. Robert Oppenheimer, der im Manhattan-Projekt die Atombombe entwickelte, und der Frage nach seiner Verantwortung.",
   places:[
    {name:"Ghost Ranch, New Mexico", country:"USA", lat:36.33, lon:-106.474,
@@ -890,7 +891,7 @@ const FILMS = [
    {name:"Montreal", country:"Kanada", lat:45.5017, lon:-73.5673,
     scene:"Ein Großteil des Films entstand in und um Montreal."}
   ]},
- {title:"Departed – Unter Feinden", year:2006, genre:"Krimi, Thriller", regie:"Martin Scorsese", cast:"Leonardo DiCaprio, Matt Damon, Jack Nicholson",
+ {title:"Departed – Unter Feinden", year:2006, genre:"Krimi, Thriller", regie:"Martin Scorsese", cast:"Leonardo DiCaprio, Matt Damon, Jack Nicholson", oscar:true,
   beschreibung:"Ein Polizist schleust sich in die irische Mafia in Boston ein, während ein Mafia-Spitzel bei der Polizei Karriere macht.",
   places:[
    {name:"Massachusetts State House, Boston", country:"USA", lat:42.3588, lon:-71.0638,
@@ -956,7 +957,7 @@ const FILMS = [
    {name:"Katz's Delicatessen, Lower East Side", country:"USA", lat:40.7223, lon:-73.9874,
     scene:"Die berühmte Szene im Deli – „Ich will genau das, was sie hatte“."}
   ]},
- {title:"Rocky", year:1976, genre:"Sportfilm, Drama", regie:"John G. Avildsen", cast:"Sylvester Stallone, Talia Shire",
+ {title:"Rocky", year:1976, genre:"Sportfilm, Drama", regie:"John G. Avildsen", cast:"Sylvester Stallone, Talia Shire", oscar:true,
   beschreibung:"Ein kleiner Boxer aus Philadelphia bekommt die Chance, gegen den Weltmeister anzutreten.",
   places:[
    {name:"Philadelphia Museum of Art", country:"USA", lat:39.9656, lon:-75.181,
@@ -984,7 +985,7 @@ const FILMS = [
    {name:"Hermosa Beach Pier", country:"USA", lat:33.8622, lon:-118.4013,
     scene:"Sebastian singt „City of Stars“ am Pier."}
   ]},
- {title:"Forrest Gump", year:1994, genre:"Drama, Komödie", regie:"Robert Zemeckis", cast:"Tom Hanks, Robin Wright",
+ {title:"Forrest Gump", year:1994, genre:"Drama, Komödie", regie:"Robert Zemeckis", cast:"Tom Hanks, Robin Wright", oscar:true,
   beschreibung:"Ein einfacher Mann aus Alabama erlebt unfreiwillig die großen Momente der amerikanischen Geschichte.",
   places:[
    {name:"Chippewa Square, Savannah", country:"USA", lat:32.0751, lon:-81.0938,
@@ -1152,7 +1153,7 @@ const FILMS = [
    {name:"Český Krumlov", country:"Tschechien", lat:48.8127, lon:14.3175,
     scene:"Die Altstadt stand für Szenen im alten Österreich."}
   ]},
- {title:"Spider-Man: Far From Home", year:2019, genre:"Superheldenfilm", regie:"Jon Watts", cast:"Tom Holland, Zendaya, Jake Gyllenhaal",
+ {title:"Spider-Man: Far From Home", year:2019, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Jon Watts", cast:"Tom Holland, Zendaya, Jake Gyllenhaal",
   beschreibung:"Peter Parker will auf Klassenfahrt durch Europa nur Urlaub machen, doch Nick Fury hat andere Pläne.",
   places:[
    {name:"Altstädter Ring, Prag", country:"Tschechien", lat:50.0875, lon:14.4213,
@@ -1330,7 +1331,7 @@ const FILMS = [
    {name:"Harcourt Park, Upper Hutt", country:"Neuseeland", lat:-41.11, lon:175.11,
     scene:"Der Park wurde zu den Gärten von Isengard."}
   ]},
- {title:"Der Herr der Ringe: Die Rückkehr des Königs", year:2003, reihe:"Herr der Ringe", genre:"Fantasy", regie:"Peter Jackson", cast:"Elijah Wood, Ian McKellen, Viggo Mortensen",
+ {title:"Der Herr der Ringe: Die Rückkehr des Königs", year:2003, reihe:"Herr der Ringe", genre:"Fantasy", regie:"Peter Jackson", cast:"Elijah Wood, Ian McKellen, Viggo Mortensen", oscar:true,
   beschreibung:"Frodo und Sam erreichen den Schicksalsberg, während Aragorn die Menschen in die letzte Schlacht um Mittelerde führt.",
   places:[
    {name:"Mount Ngauruhoe, Tongariro", country:"Neuseeland", lat:-39.1567, lon:175.632,
@@ -1534,7 +1535,7 @@ const FILMS = [
    {name:"Taipeh", country:"Taiwan", lat:25.033, lon:121.5654,
     scene:"Der Film spielt in den Wohnungen und Straßen Taipehs."}
   ]},
- {title:"Parasite", year:2019, genre:"Thriller, Satire", regie:"Bong Joon-ho", cast:"Song Kang-ho, Choi Woo-shik, Park So-dam",
+ {title:"Parasite", year:2019, genre:"Thriller, Satire", regie:"Bong Joon-ho", cast:"Song Kang-ho, Choi Woo-shik, Park So-dam", oscar:true,
   beschreibung:"Eine arme Familie schleicht sich nach und nach als Angestellte in den Haushalt einer reichen Familie ein.",
   places:[
    {name:"Treppen am Jahamun-Tunnel, Seoul", country:"Südkorea", lat:37.586, lon:126.969,
@@ -1652,7 +1653,7 @@ const FILMS = [
    {name:"Wüste bei Liwa", country:"Vereinigte Arabische Emirate", lat:23.103, lon:53.797,
     scene:"Die hohen Dünen der Tiefen Wüste."}
   ]},
- {title:"Einer flog über das Kuckucksnest", year:1975, genre:"Drama", regie:"Miloš Forman", cast:"Jack Nicholson, Louise Fletcher",
+ {title:"Einer flog über das Kuckucksnest", year:1975, genre:"Drama", regie:"Miloš Forman", cast:"Jack Nicholson, Louise Fletcher", oscar:true,
   beschreibung:"Ein Häftling lässt sich in eine Psychiatrie verlegen und rebelliert gegen die strenge Oberschwester.",
   places:[
    {name:"Oregon State Hospital, Salem", country:"USA", lat:44.937, lon:-123.005,
@@ -1718,7 +1719,7 @@ const FILMS = [
    {name:"Anwesen der Familie Qiao, Shanxi", country:"China", lat:37.396, lon:112.44,
     scene:"Das historische Anwesen ist der einzige Schauplatz."}
   ]},
- {title:"Das Schweigen der Lämmer", year:1991, genre:"Thriller", regie:"Jonathan Demme", cast:"Jodie Foster, Anthony Hopkins",
+ {title:"Das Schweigen der Lämmer", year:1991, genre:"Thriller", regie:"Jonathan Demme", cast:"Jodie Foster, Anthony Hopkins", oscar:true,
   beschreibung:"Eine FBI-Anwärterin bittet den inhaftierten Psychiater Hannibal Lecter um Hilfe bei der Jagd auf einen Serienmörder.",
   places:[
    {name:"Layton, Pennsylvania", country:"USA", lat:40.089, lon:-79.746,
@@ -1808,7 +1809,7 @@ const FILMS = [
    {name:"Echo Park Lake, Los Angeles", country:"USA", lat:34.073, lon:-118.261,
     scene:"Jake beobachtet Mulwray beim Bootfahren."}
   ]},
- {title:"No Country for Old Men", year:2007, genre:"Thriller, Western", regie:"Joel und Ethan Coen", cast:"Josh Brolin, Javier Bardem, Tommy Lee Jones",
+ {title:"No Country for Old Men", year:2007, genre:"Thriller, Western", regie:"Joel und Ethan Coen", cast:"Josh Brolin, Javier Bardem, Tommy Lee Jones", oscar:true,
   beschreibung:"Ein Jäger findet zwei Millionen Dollar und wird von einem gnadenlosen Killer verfolgt.",
   places:[
    {name:"Las Vegas, New Mexico", country:"USA", lat:35.594, lon:-105.223,
@@ -1916,7 +1917,7 @@ const FILMS = [
    {name:"Los Albaricoques, Almería", country:"Spanien", lat:36.95, lon:-2.13,
     scene:"Das weiße Dorf ist Schauplatz des Finales."}
   ]},
- {title:"Die Brücke am Kwai", year:1957, genre:"Kriegsfilm", regie:"David Lean", cast:"Alec Guinness, William Holden",
+ {title:"Die Brücke am Kwai", year:1957, genre:"Kriegsfilm", regie:"David Lean", cast:"Alec Guinness, William Holden", oscar:true,
   beschreibung:"Britische Kriegsgefangene müssen für die Japaner eine Eisenbahnbrücke bauen.",
   places:[
    {name:"Kitulgala", country:"Sri Lanka", lat:6.989, lon:80.417,
@@ -1970,7 +1971,7 @@ const FILMS = [
    {name:"Kilmainham Gaol, Dublin", country:"Irland", lat:53.3418, lon:-6.3096,
     scene:"Das ehemalige Gefängnis."}
   ]},
- {title:"Erbarmungslos", year:1992, genre:"Western", regie:"Clint Eastwood", cast:"Clint Eastwood, Gene Hackman, Morgan Freeman",
+ {title:"Erbarmungslos", year:1992, genre:"Western", regie:"Clint Eastwood", cast:"Clint Eastwood, Gene Hackman, Morgan Freeman", oscar:true,
   beschreibung:"Ein gealterter Revolverheld nimmt einen letzten Auftrag an.",
   places:[
    {name:"Longview, Alberta", country:"Kanada", lat:50.529, lon:-114.242,
@@ -1994,7 +1995,7 @@ const FILMS = [
    {name:"Iguazú-Wasserfälle", country:"Argentinien", lat:-25.6953, lon:-54.4367,
     scene:"Das Ziel, das die beiden gemeinsam sehen wollten."}
   ]},
- {title:"Der Clou", year:1973, genre:"Krimi, Komödie", regie:"George Roy Hill", cast:"Paul Newman, Robert Redford",
+ {title:"Der Clou", year:1973, genre:"Krimi, Komödie", regie:"George Roy Hill", cast:"Paul Newman, Robert Redford", oscar:true,
   beschreibung:"Zwei Trickbetrüger planen im Chicago der 1930er einen großen Coup.",
   places:[
    {name:"Karussell am Santa Monica Pier", country:"USA", lat:34.0099, lon:-118.4963,
@@ -2054,7 +2055,7 @@ const FILMS = [
    {name:"Barcelona", country:"Spanien", lat:41.3875, lon:2.1753,
     scene:"Manuela taucht in Barcelonas Theaterwelt ein."}
   ]},
- {title:"Moonlight", year:2016, genre:"Drama", regie:"Barry Jenkins", cast:"Trevante Rhodes, Mahershala Ali",
+ {title:"Moonlight", year:2016, genre:"Drama", regie:"Barry Jenkins", cast:"Trevante Rhodes, Mahershala Ali", oscar:true,
   beschreibung:"Drei Lebensabschnitte eines jungen schwarzen Mannes in Miami.",
   places:[
    {name:"Liberty City, Miami", country:"USA", lat:25.833, lon:-80.22,
@@ -2152,7 +2153,7 @@ const FILMS = [
    {name:"Studios de la Victorine, Nizza", country:"Frankreich", lat:43.688, lon:7.237,
     scene:"Die Studios, in denen der Film-im-Film entsteht."}
   ]},
- {title:"12 Years a Slave", year:2013, genre:"Drama", regie:"Steve McQueen", cast:"Chiwetel Ejiofor, Michael Fassbender",
+ {title:"12 Years a Slave", year:2013, genre:"Drama", regie:"Steve McQueen", cast:"Chiwetel Ejiofor, Michael Fassbender", oscar:true,
   beschreibung:"Ein freier Schwarzer wird 1841 entführt und in die Sklaverei verkauft.",
   places:[
    {name:"Felicity Plantation, Louisiana", country:"USA", lat:30.064, lon:-90.859,
@@ -2224,7 +2225,7 @@ const FILMS = [
    {name:"Kananaskis, Alberta", country:"Kanada", lat:50.62, lon:-115.13,
     scene:"Die Rocky Mountains stellten Wyoming dar."}
   ]},
- {title:"Die Faust im Nacken", year:1954, genre:"Drama", regie:"Elia Kazan", cast:"Marlon Brando, Eva Marie Saint",
+ {title:"Die Faust im Nacken", year:1954, genre:"Drama", regie:"Elia Kazan", cast:"Marlon Brando, Eva Marie Saint", oscar:true,
   beschreibung:"Ein Hafenarbeiter wendet sich gegen die korrupte Gewerkschaft.",
   places:[
    {name:"Hoboken, New Jersey", country:"USA", lat:40.744, lon:-74.032,
@@ -2340,7 +2341,7 @@ const FILMS = [
    {name:"Stadtautobahn Akasaka, Tokio", country:"Japan", lat:35.674, lon:139.738,
     scene:"Die lange Autofahrt als Bild der Zukunft."}
   ]},
- {title:"Die durch die Hölle gehen", year:1978, genre:"Kriegsfilm, Drama", regie:"Michael Cimino", cast:"Robert De Niro, Christopher Walken, Meryl Streep",
+ {title:"Die durch die Hölle gehen", year:1978, genre:"Kriegsfilm, Drama", regie:"Michael Cimino", cast:"Robert De Niro, Christopher Walken, Meryl Streep", oscar:true,
   beschreibung:"Drei Freunde aus einer Stahlstadt ziehen in den Vietnamkrieg.",
   places:[
    {name:"Mingo Junction, Ohio", country:"USA", lat:40.322, lon:-80.61,
@@ -2359,5 +2360,479 @@ const FILMS = [
   places:[
    {name:"Via Montecuccioli, Pigneto, Rom", country:"Italien", lat:41.895, lon:12.532,
     scene:"Die Straße, in der Pina erschossen wird."}
+  ]},
+ {title:"Iron Man", year:2008, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Jon Favreau", cast:"Robert Downey Jr., Gwyneth Paltrow",
+  beschreibung:"Der Waffenfabrikant Tony Stark wird entführt, baut sich eine Rüstung und wird zu Iron Man.",
+  places:[
+   {name:"Alabama Hills, Lone Pine", country:"USA", lat:36.6, lon:-118.11,
+    scene:"Die Felslandschaft stellte Afghanistan dar, wo Tony entführt wird."}
+  ]},
+ {title:"Der unglaubliche Hulk", year:2008, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Louis Leterrier", cast:"Edward Norton, Liv Tyler, Tim Roth",
+  beschreibung:"Bruce Banner versteckt sich in Brasilien und sucht ein Heilmittel gegen den Hulk in sich.",
+  places:[
+   {name:"Rocinha, Rio de Janeiro", country:"Brasilien", lat:-22.988, lon:-43.248,
+    scene:"Die Verfolgungsjagd über die Dächer der Favela."}
+  ]},
+ {title:"Iron Man 2", year:2010, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Jon Favreau", cast:"Robert Downey Jr., Mickey Rourke, Scarlett Johansson",
+  beschreibung:"Tony Stark wird von der Regierung unter Druck gesetzt und von einem russischen Physiker mit Rachegelüsten angegriffen.",
+  places:[
+   {name:"Randy's Donuts, Inglewood", country:"USA", lat:33.9617, lon:-118.3705,
+    scene:"Tony sitzt im Rüstungsanzug im riesigen Donut auf dem Dach."}
+  ]},
+ {title:"Thor", year:2011, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Kenneth Branagh", cast:"Chris Hemsworth, Natalie Portman, Tom Hiddleston",
+  beschreibung:"Der Donnergott Thor wird von seinem Vater auf die Erde verbannt und muss lernen, wahrhaft würdig zu sein.",
+  places:[
+   {name:"Galisteo, New Mexico", country:"USA", lat:35.395, lon:-105.95,
+    scene:"Hier wurde die Kleinstadt Puente Antiguo gebaut, in der Thor landet."}
+  ]},
+ {title:"Captain America: The First Avenger", year:2011, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Joe Johnston", cast:"Chris Evans, Hayley Atwell, Hugo Weaving",
+  beschreibung:"Der schmächtige Steve Rogers wird im Zweiten Weltkrieg mit einem Serum zum Supersoldaten.",
+  places:[
+   {name:"Stanley Dock, Liverpool", country:"Vereinigtes Königreich", lat:53.418, lon:-3,
+    scene:"Die Docks stellten das Brooklyn der 1940er dar."},
+   {name:"Northern Quarter, Manchester", country:"Vereinigtes Königreich", lat:53.484, lon:-2.236,
+    scene:"Die Straßen wurden zum alten New York."}
+  ]},
+ {title:"Marvel's The Avengers", year:2012, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Joss Whedon", cast:"Robert Downey Jr., Chris Evans, Scarlett Johansson",
+  beschreibung:"Nick Fury bringt die mächtigsten Helden zusammen, um Lokis Invasion der Erde zu stoppen.",
+  places:[
+   {name:"East 9th Street, Cleveland", country:"USA", lat:41.5, lon:-81.69,
+    scene:"Die Straßen dienten für die Schlacht um New York."}
+  ]},
+ {title:"Iron Man 3", year:2013, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Shane Black", cast:"Robert Downey Jr., Gwyneth Paltrow, Ben Kingsley",
+  beschreibung:"Nach den Ereignissen in New York kämpft Tony mit Angstzuständen und gegen den Terroristen Mandarin.",
+  places:[
+   {name:"Villa Vizcaya, Miami", country:"USA", lat:25.7443, lon:-80.2105,
+    scene:"Die Villa diente als Anwesen des Mandarins."}
+  ]},
+ {title:"Thor – The Dark Kingdom", year:2013, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Alan Taylor", cast:"Chris Hemsworth, Natalie Portman, Tom Hiddleston",
+  beschreibung:"Thor muss sich mit seinem Bruder Loki verbünden, um die Dunkelelfen aufzuhalten.",
+  places:[
+   {name:"Old Royal Naval College, Greenwich", country:"Vereinigtes Königreich", lat:51.4827, lon:-0.006,
+    scene:"Schauplatz der Endschlacht in London."}
+  ]},
+ {title:"The Return of the First Avenger", year:2014, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Anthony und Joe Russo", cast:"Chris Evans, Scarlett Johansson, Sebastian Stan",
+  beschreibung:"Captain America deckt eine Verschwörung innerhalb von S.H.I.E.L.D. auf und trifft auf den Winter Soldier.",
+  places:[
+   {name:"National Mall, Washington", country:"USA", lat:38.8893, lon:-77.0502,
+    scene:"Steve joggt am Reflecting Pool, wo er Sam Wilson kennenlernt."}
+  ]},
+ {title:"Guardians of the Galaxy", year:2014, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"James Gunn", cast:"Chris Pratt, Zoe Saldaña, Dave Bautista",
+  beschreibung:"Eine Truppe von Außenseitern muss eine mächtige Kugel vor einem Kriegsherrn schützen.",
+  places:[
+   {name:"Shepperton Studios", country:"Vereinigtes Königreich", lat:51.408, lon:-0.454,
+    scene:"Die fremden Welten entstanden in den Studios bei London."}
+  ]},
+ {title:"Avengers: Age of Ultron", year:2015, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Joss Whedon", cast:"Robert Downey Jr., Chris Hemsworth, Mark Ruffalo",
+  beschreibung:"Tony Stark erschafft die künstliche Intelligenz Ultron, die die Menschheit auslöschen will.",
+  places:[
+   {name:"Fort Bard, Aostatal", country:"Italien", lat:45.606, lon:7.747,
+    scene:"Die Festung wurde zur Hydra-Basis in der Eröffnungsschlacht."},
+   {name:"Gangnam, Seoul", country:"Südkorea", lat:37.498, lon:127.027,
+    scene:"Die Verfolgungsjagd durch die Stadt."}
+  ]},
+ {title:"Ant-Man", year:2015, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Peyton Reed", cast:"Paul Rudd, Michael Douglas, Evangeline Lilly",
+  beschreibung:"Ein Meisterdieb erhält einen Anzug, mit dem er auf Insektengröße schrumpfen kann.",
+  places:[
+   {name:"San Francisco", country:"USA", lat:37.7749, lon:-122.4194,
+    scene:"Scotts Heimatstadt."}
+  ]},
+ {title:"The First Avenger: Civil War", year:2016, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Anthony und Joe Russo", cast:"Chris Evans, Robert Downey Jr., Chadwick Boseman",
+  beschreibung:"Die Avengers zerstreiten sich über ein Gesetz, das Superhelden staatlicher Kontrolle unterstellen soll.",
+  places:[
+   {name:"Flughafen Leipzig/Halle", country:"Deutschland", lat:51.424, lon:12.236,
+    scene:"Die große Schlacht der Helden auf dem Flughafen."}
+  ]},
+ {title:"Doctor Strange", year:2016, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Scott Derrickson", cast:"Benedict Cumberbatch, Tilda Swinton",
+  beschreibung:"Ein arroganter Chirurg verliert seine Hände und findet in Nepal den Weg zur Magie.",
+  places:[
+   {name:"Durbar Square, Kathmandu", country:"Nepal", lat:27.7046, lon:85.307,
+    scene:"Strange sucht in den Gassen nach Kamar-Taj."}
+  ]},
+ {title:"Guardians of the Galaxy Vol. 2", year:2017, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"James Gunn", cast:"Chris Pratt, Zoe Saldaña, Kurt Russell",
+  beschreibung:"Peter Quill trifft seinen Vater Ego, einen lebenden Planeten.",
+  places:[
+   {name:"Pinewood Studios, Atlanta", country:"USA", lat:33.405, lon:-84.528,
+    scene:"Der Film entstand fast ganz in den Studios bei Atlanta."}
+  ]},
+ {title:"Spider-Man: Homecoming", year:2017, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Jon Watts", cast:"Tom Holland, Michael Keaton, Robert Downey Jr.",
+  beschreibung:"Peter Parker will Tony Stark beweisen, dass er ein echter Avenger ist, und legt sich mit dem Vulture an.",
+  places:[
+   {name:"Franklin K. Lane High School, New York", country:"USA", lat:40.6905, lon:-73.873,
+    scene:"Die Schule stellte Peters Midtown School of Science dar."}
+  ]},
+ {title:"Thor: Tag der Entscheidung", year:2017, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Taika Waititi", cast:"Chris Hemsworth, Tom Hiddleston, Cate Blanchett",
+  beschreibung:"Thor strandet auf einem Müllplaneten und muss als Gladiator gegen den Hulk kämpfen, während Hela Asgard erobert.",
+  places:[
+   {name:"Village Roadshow Studios, Gold Coast", country:"Australien", lat:-27.91, lon:153.315,
+    scene:"Gedreht in den Studios an Australiens Gold Coast."}
+  ]},
+ {title:"Black Panther", year:2018, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Ryan Coogler", cast:"Chadwick Boseman, Michael B. Jordan, Lupita Nyong'o",
+  beschreibung:"T'Challa wird König von Wakanda und muss sich einem Herausforderer stellen.",
+  places:[
+   {name:"Jagalchi-Markt, Busan", country:"Südkorea", lat:35.097, lon:129.03,
+    scene:"Das Casino und die Autoverfolgung durch Busan."}
+  ]},
+ {title:"Avengers: Infinity War", year:2018, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Anthony und Joe Russo", cast:"Robert Downey Jr., Chris Hemsworth, Josh Brolin",
+  beschreibung:"Thanos jagt die sechs Infinity-Steine, um die Hälfte allen Lebens auszulöschen.",
+  places:[
+   {name:"Bahnhof Waverley, Edinburgh", country:"Vereinigtes Königreich", lat:55.952, lon:-3.189,
+    scene:"Wanda und Vision werden nachts in Edinburgh angegriffen."}
+  ]},
+ {title:"Ant-Man and the Wasp", year:2018, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Peyton Reed", cast:"Paul Rudd, Evangeline Lilly",
+  beschreibung:"Scott Lang und Hope van Dyne versuchen, Janet aus der Quantenwelt zu retten.",
+  places:[
+   {name:"San Francisco", country:"USA", lat:37.779, lon:-122.419,
+    scene:"Die Verfolgungsjagd durch die Hügel der Stadt."}
+  ]},
+ {title:"Captain Marvel", year:2019, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Anna Boden, Ryan Fleck", cast:"Brie Larson, Samuel L. Jackson",
+  beschreibung:"Eine Kree-Kriegerin landet im Jahr 1995 auf der Erde und entdeckt ihre Vergangenheit.",
+  places:[
+   {name:"Los Angeles", country:"USA", lat:34.0522, lon:-118.2437,
+    scene:"Carol landet im Los Angeles der 1990er."}
+  ]},
+ {title:"Avengers: Endgame", year:2019, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Anthony und Joe Russo", cast:"Robert Downey Jr., Chris Evans, Scarlett Johansson",
+  beschreibung:"Die übrigen Avengers versuchen mit einer Zeitreise, Thanos' Werk rückgängig zu machen.",
+  places:[
+   {name:"St Abbs, Schottland", country:"Vereinigtes Königreich", lat:55.899, lon:-2.13,
+    scene:"Das Fischerdorf wurde zu New Asgard."}
+  ]},
+ {title:"Black Widow", year:2021, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Cate Shortland", cast:"Scarlett Johansson, Florence Pugh, David Harbour",
+  beschreibung:"Natasha Romanoff stellt sich ihrer Vergangenheit als Agentin im Red Room.",
+  places:[
+   {name:"Budapest", country:"Ungarn", lat:47.4979, lon:19.0402,
+    scene:"Die Verfolgungsjagd durch die Straßen von Budapest."}
+  ]},
+ {title:"Shang-Chi and the Legend of the Ten Rings", year:2021, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Destin Daniel Cretton", cast:"Simu Liu, Awkwafina, Tony Leung",
+  beschreibung:"Ein junger Mann muss sich der Organisation seines Vaters stellen.",
+  places:[
+   {name:"California Street, San Francisco", country:"USA", lat:37.792, lon:-122.41,
+    scene:"Die Kampfszene im Linienbus."}
+  ]},
+ {title:"Eternals", year:2021, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Chloé Zhao", cast:"Gemma Chan, Richard Madden, Angelina Jolie",
+  beschreibung:"Unsterbliche Wesen, die seit Jahrtausenden auf der Erde leben, müssen sich wieder vereinen.",
+  places:[
+   {name:"Lanzarote", country:"Spanien", lat:29.027, lon:-13.816,
+    scene:"Die Vulkanlandschaft der Kanareninsel."}
+  ]},
+ {title:"Spider-Man: No Way Home", year:2021, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Jon Watts", cast:"Tom Holland, Zendaya, Benedict Cumberbatch",
+  beschreibung:"Nachdem seine Identität enthüllt wurde, bittet Peter Doctor Strange um Hilfe – mit Folgen für das Multiversum.",
+  places:[
+   {name:"Trilith Studios, Atlanta", country:"USA", lat:33.418, lon:-84.552,
+    scene:"Die New-York-Szenen entstanden größtenteils in Studios bei Atlanta."}
+  ]},
+ {title:"Doctor Strange in the Multiverse of Madness", year:2022, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Sam Raimi", cast:"Benedict Cumberbatch, Elizabeth Olsen",
+  beschreibung:"Strange reist durch das Multiversum, um ein Mädchen vor Wanda zu schützen.",
+  places:[
+   {name:"Studios bei London", country:"Vereinigtes Königreich", lat:51.547, lon:-0.53,
+    scene:"Gedreht in Studios rund um London."}
+  ]},
+ {title:"Thor: Love and Thunder", year:2022, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Taika Waititi", cast:"Chris Hemsworth, Natalie Portman, Christian Bale",
+  beschreibung:"Thor muss Gorr den Götterschlächter aufhalten – und trifft Jane als Mighty Thor wieder.",
+  places:[
+   {name:"Disney Studios Australia, Sydney", country:"Australien", lat:-33.892, lon:151.226,
+    scene:"Gedreht in den Studios in Sydney."}
+  ]},
+ {title:"Black Panther: Wakanda Forever", year:2022, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Ryan Coogler", cast:"Letitia Wright, Angela Bassett, Tenoch Huerta",
+  beschreibung:"Wakanda trauert um seinen König und gerät in Konflikt mit dem Unterwasserreich Talokan.",
+  places:[
+   {name:"Trilith Studios, Atlanta", country:"USA", lat:33.4183, lon:-84.5515,
+    scene:"Gedreht in den Studios bei Atlanta."}
+  ]},
+ {title:"Ant-Man and the Wasp: Quantumania", year:2023, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Peyton Reed", cast:"Paul Rudd, Evangeline Lilly, Jonathan Majors",
+  beschreibung:"Scott und seine Familie werden in die Quantenwelt gezogen und treffen auf Kang.",
+  places:[
+   {name:"Pinewood Studios", country:"Vereinigtes Königreich", lat:51.549, lon:-0.537,
+    scene:"Die Quantenwelt entstand im Studio."}
+  ]},
+ {title:"Guardians of the Galaxy Vol. 3", year:2023, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"James Gunn", cast:"Chris Pratt, Zoe Saldaña, Bradley Cooper",
+  beschreibung:"Die Guardians müssen Rocket retten und stoßen auf seinen Schöpfer.",
+  places:[
+   {name:"Trilith Studios, Atlanta", country:"USA", lat:33.4176, lon:-84.5525,
+    scene:"Gedreht in den Studios bei Atlanta."}
+  ]},
+ {title:"The Marvels", year:2023, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Nia DaCosta", cast:"Brie Larson, Teyonah Parris, Iman Vellani",
+  beschreibung:"Carol Danvers, Monica Rambeau und Kamala Khan tauschen bei jedem Einsatz ihrer Kräfte die Plätze.",
+  places:[
+   {name:"Pinewood Studios", country:"Vereinigtes Königreich", lat:51.5487, lon:-0.5375,
+    scene:"Gedreht in den Studios westlich von London."}
+  ]},
+ {title:"Deadpool & Wolverine", year:2024, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Shawn Levy", cast:"Ryan Reynolds, Hugh Jackman",
+  beschreibung:"Deadpool holt eine Wolverine-Variante aus dem Multiversum, um seine Welt zu retten.",
+  places:[
+   {name:"Pinewood Studios", country:"Vereinigtes Königreich", lat:51.5493, lon:-0.5365,
+    scene:"Gedreht in den Studios und in der Umgebung von London."}
+  ]},
+ {title:"Captain America: Brave New World", year:2025, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Julius Onah", cast:"Anthony Mackie, Harrison Ford",
+  beschreibung:"Sam Wilson ist der neue Captain America und gerät in eine Verschwörung um den US-Präsidenten.",
+  places:[
+   {name:"Trilith Studios, Atlanta", country:"USA", lat:33.4187, lon:-84.551,
+    scene:"Gedreht in den Studios bei Atlanta."}
+  ]},
+ {title:"Thunderbolts*", year:2025, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Jake Schreier", cast:"Florence Pugh, David Harbour, Sebastian Stan",
+  beschreibung:"Eine Gruppe von Antihelden wird in eine Falle gelockt und muss widerwillig zusammenarbeiten.",
+  places:[
+   {name:"Merdeka 118, Kuala Lumpur", country:"Malaysia", lat:3.1415, lon:101.7,
+    scene:"Yelena springt vom zweithöchsten Gebäude der Welt."}
+  ]},
+ {title:"The Fantastic Four: First Steps", year:2025, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Matt Shakman", cast:"Pedro Pascal, Vanessa Kirby",
+  beschreibung:"Die Fantastischen Vier müssen ihre retrofuturistische Erde vor Galactus schützen.",
+  places:[
+   {name:"Pinewood Studios", country:"Vereinigtes Königreich", lat:51.5484, lon:-0.538,
+    scene:"Die Retro-Welt entstand in den Studios bei London."}
+  ]},
+ {title:"Spider-Man: Brand New Day", year:2026, reihe:"Marvel", marke:"Marvel", genre:"Superheldenfilm", regie:"Destin Daniel Cretton", cast:"Tom Holland, Zendaya",
+  beschreibung:"Nachdem ihn niemand mehr kennt, beginnt Peter Parker ein neues Leben als Spider-Man.",
+  places:[
+   {name:"Glasgow", country:"Vereinigtes Königreich", lat:55.8642, lon:-4.2518,
+    scene:"Die Innenstadt wurde in New York verwandelt."}
+  ]},
+ {title:"Superman", year:1978, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Richard Donner", cast:"Christopher Reeve, Margot Kidder, Gene Hackman",
+  beschreibung:"Ein Junge vom Planeten Krypton wächst auf einer Farm auf und wird zum Beschützer der Erde.",
+  places:[
+   {name:"Daily News Building, New York", country:"USA", lat:40.7505, lon:-73.9733,
+    scene:"Das Gebäude wurde zum Daily Planet."},
+   {name:"Blairmore, Alberta", country:"Kanada", lat:49.608, lon:-114.437,
+    scene:"Die Prärie stellte Smallville dar."}
+  ]},
+ {title:"Superman II – Allein gegen alle", year:1980, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Richard Lester", cast:"Christopher Reeve, Terence Stamp",
+  beschreibung:"Superman verzichtet für Lois auf seine Kräfte – gerade als drei Verbrecher von Krypton angreifen.",
+  places:[
+   {name:"Niagarafälle", country:"Kanada", lat:43.08, lon:-79.075,
+    scene:"Superman rettet einen Jungen, der in die Fälle stürzt."}
+  ]},
+ {title:"Superman Returns", year:2006, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Bryan Singer", cast:"Brandon Routh, Kate Bosworth, Kevin Spacey",
+  beschreibung:"Nach Jahren im All kehrt Superman zurück und findet eine veränderte Welt vor.",
+  places:[
+   {name:"Fox Studios Australia, Sydney", country:"Australien", lat:-33.8925, lon:151.2265,
+    scene:"Metropolis entstand in den Studios und Straßen von Sydney."}
+  ]},
+ {title:"Batman", year:1989, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Tim Burton", cast:"Michael Keaton, Jack Nicholson, Kim Basinger",
+  beschreibung:"Batman stellt sich in Gotham City dem Joker.",
+  places:[
+   {name:"Knebworth House", country:"Vereinigtes Königreich", lat:51.872, lon:-0.214,
+    scene:"Das Herrenhaus spielte Wayne Manor."}
+  ]},
+ {title:"Batmans Rückkehr", year:1992, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Tim Burton", cast:"Michael Keaton, Danny DeVito, Michelle Pfeiffer",
+  beschreibung:"Batman kämpft gegen den Pinguin und Catwoman.",
+  places:[
+   {name:"Warner Bros. Studios, Burbank", country:"USA", lat:34.149, lon:-118.336,
+    scene:"Gotham wurde komplett im Studio gebaut."}
+  ]},
+ {title:"Batman Forever", year:1995, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Joel Schumacher", cast:"Val Kilmer, Jim Carrey, Tommy Lee Jones",
+  beschreibung:"Batman bekommt es mit Two-Face und dem Riddler zu tun.",
+  places:[
+   {name:"Webb Institute, Glen Cove", country:"USA", lat:40.88, lon:-73.647,
+    scene:"Das Anwesen diente als Wayne Manor."}
+  ]},
+ {title:"Batman & Robin", year:1997, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Joel Schumacher", cast:"George Clooney, Arnold Schwarzenegger, Uma Thurman",
+  beschreibung:"Batman und Robin müssen Mr. Freeze und Poison Ivy aufhalten.",
+  places:[
+   {name:"Warner Bros. Studios, Burbank", country:"USA", lat:34.1493, lon:-118.3355,
+    scene:"Der Film entstand fast ausschließlich im Studio."}
+  ]},
+ {title:"Man of Steel", year:2013, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Zack Snyder", cast:"Henry Cavill, Amy Adams, Michael Shannon",
+  beschreibung:"Clark Kent muss sich entscheiden, ob er sich der Welt zeigt, als General Zod die Erde bedroht.",
+  places:[
+   {name:"Plano, Illinois", country:"USA", lat:41.662, lon:-88.537,
+    scene:"Die Kleinstadt stellte Smallville dar."},
+   {name:"Chicago", country:"USA", lat:41.8781, lon:-87.6298,
+    scene:"Die Stadt wurde zu Metropolis."}
+  ]},
+ {title:"Batman v Superman: Dawn of Justice", year:2016, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Zack Snyder", cast:"Ben Affleck, Henry Cavill, Gal Gadot",
+  beschreibung:"Batman sieht in Superman eine Bedrohung für die Menschheit.",
+  places:[
+   {name:"Michigan Central Station, Detroit", country:"USA", lat:42.329, lon:-83.078,
+    scene:"Der verlassene Bahnhof wurde zu Ruinen in Gotham."}
+  ]},
+ {title:"Suicide Squad", year:2016, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"David Ayer", cast:"Will Smith, Margot Robbie, Jared Leto",
+  beschreibung:"Eine Regierungsbeamtin stellt ein Team aus Superschurken für eine Selbstmordmission zusammen.",
+  places:[
+   {name:"Toronto", country:"Kanada", lat:43.6532, lon:-79.3832,
+    scene:"Die Stadt stand für Midway City."}
+  ]},
+ {title:"Wonder Woman", year:2017, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Patty Jenkins", cast:"Gal Gadot, Chris Pine",
+  beschreibung:"Die Amazonenprinzessin Diana verlässt ihre Insel, um im Ersten Weltkrieg den Kriegsgott Ares aufzuhalten.",
+  places:[
+   {name:"Palinuro, Kampanien", country:"Italien", lat:40.027, lon:15.278,
+    scene:"Die Küste wurde zur Amazoneninsel Themyscira."},
+   {name:"Louvre, Paris", country:"Frankreich", lat:48.8609, lon:2.3378,
+    scene:"Diana arbeitet im Museum in der Rahmenhandlung."}
+  ]},
+ {title:"Justice League", year:2017, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Zack Snyder", cast:"Ben Affleck, Gal Gadot, Jason Momoa",
+  beschreibung:"Batman und Wonder Woman sammeln Helden, um Steppenwolf aufzuhalten.",
+  places:[
+   {name:"Djúpavík", country:"Island", lat:65.943, lon:-21.565,
+    scene:"Bruce Wayne sucht Aquaman in einem Fischerdorf."}
+  ]},
+ {title:"Aquaman", year:2018, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"James Wan", cast:"Jason Momoa, Amber Heard, Willem Dafoe",
+  beschreibung:"Der Halb-Atlanter Arthur Curry muss seinen Anspruch auf den Thron von Atlantis durchsetzen.",
+  places:[
+   {name:"Village Roadshow Studios, Gold Coast", country:"Australien", lat:-27.9105, lon:153.3155,
+    scene:"Die Unterwasserwelt entstand in den australischen Studios."}
+  ]},
+ {title:"Shazam!", year:2019, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"David F. Sandberg", cast:"Zachary Levi, Asher Angel, Mark Strong",
+  beschreibung:"Ein Teenager kann sich mit einem Zauberwort in einen erwachsenen Superhelden verwandeln.",
+  places:[
+   {name:"Hamilton, Ontario", country:"Kanada", lat:43.2557, lon:-79.8711,
+    scene:"Die Stadt stellte Philadelphia dar."}
+  ]},
+ {title:"Birds of Prey", year:2020, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Cathy Yan", cast:"Margot Robbie, Mary Elizabeth Winstead",
+  beschreibung:"Nach der Trennung vom Joker schließt sich Harley Quinn mit anderen Frauen gegen einen Gangsterboss zusammen.",
+  places:[
+   {name:"Los Angeles", country:"USA", lat:34.045, lon:-118.25,
+    scene:"Die Stadt stand für Gotham City."}
+  ]},
+ {title:"Wonder Woman 1984", year:2020, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Patty Jenkins", cast:"Gal Gadot, Chris Pine, Pedro Pascal",
+  beschreibung:"Im Jahr 1984 stellt sich Diana einem Geschäftsmann, der Wünsche wahr werden lässt.",
+  places:[
+   {name:"National Mall, Washington", country:"USA", lat:38.8896, lon:-77.023,
+    scene:"Diana arbeitet im Smithsonian."},
+   {name:"Fuerteventura", country:"Spanien", lat:28.402, lon:-14.004,
+    scene:"Die Insel stellte erneut Themyscira dar."},
+   {name:"Wüste von Tabernas, Almería", country:"Spanien", lat:37.048, lon:-2.392,
+    scene:"Die Verfolgungsjagd in „Ägypten“."}
+  ]},
+ {title:"The Suicide Squad", year:2021, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"James Gunn", cast:"Margot Robbie, Idris Elba, John Cena",
+  beschreibung:"Die Task Force X soll auf einer Insel ein geheimes Forschungslabor zerstören.",
+  places:[
+   {name:"Panama-Stadt", country:"Panama", lat:8.9824, lon:-79.5199,
+    scene:"Panama stand für den Inselstaat Corto Maltese."}
+  ]},
+ {title:"Black Adam", year:2022, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Jaume Collet-Serra", cast:"Dwayne Johnson, Pierce Brosnan",
+  beschreibung:"Ein antiker Halbgott erwacht nach 5000 Jahren und bringt seine eigene Art von Gerechtigkeit.",
+  places:[
+   {name:"Trilith Studios, Atlanta", country:"USA", lat:33.419, lon:-84.5505,
+    scene:"Gedreht in den Studios bei Atlanta."}
+  ]},
+ {title:"Shazam! Fury of the Gods", year:2023, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"David F. Sandberg", cast:"Zachary Levi, Helen Mirren, Lucy Liu",
+  beschreibung:"Billy und seine Geschwister müssen sich den Töchtern des Atlas stellen.",
+  places:[
+   {name:"Atlanta", country:"USA", lat:33.749, lon:-84.388,
+    scene:"Die Stadt stand für Philadelphia."}
+  ]},
+ {title:"The Flash", year:2023, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Andy Muschietti", cast:"Ezra Miller, Michael Keaton, Sasha Calle",
+  beschreibung:"Barry Allen reist in die Vergangenheit, um seine Mutter zu retten, und zerstört dabei die Zeitlinie.",
+  places:[
+   {name:"Altstadt von Edinburgh", country:"Vereinigtes Königreich", lat:55.948, lon:-3.193,
+    scene:"Die Gassen von Edinburgh wurden zu Gotham."}
+  ]},
+ {title:"Blue Beetle", year:2023, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Ángel Manuel Soto", cast:"Xolo Maridueña, Bruna Marquezine",
+  beschreibung:"Ein junger Mann wird von einem außerirdischen Skarabäus als Wirt auserwählt.",
+  places:[
+   {name:"Trilith Studios, Atlanta", country:"USA", lat:33.4172, lon:-84.553,
+    scene:"Gedreht in den Studios bei Atlanta."}
+  ]},
+ {title:"Aquaman: Lost Kingdom", year:2023, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"James Wan", cast:"Jason Momoa, Patrick Wilson",
+  beschreibung:"Aquaman verbündet sich mit seinem Bruder gegen Black Manta.",
+  places:[
+   {name:"Warner Bros. Studios Leavesden", country:"Vereinigtes Königreich", lat:51.693, lon:-0.421,
+    scene:"Gedreht in den Studios nördlich von London."}
+  ]},
+ {title:"Superman", year:2025, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"James Gunn", cast:"David Corenswet, Rachel Brosnahan, Nicholas Hoult",
+  beschreibung:"Superman versucht, seine kryptonische Herkunft mit seiner menschlichen Erziehung zu vereinen.",
+  places:[
+   {name:"Cleveland", country:"USA", lat:41.4993, lon:-81.6944,
+    scene:"Die Stadt stand für Metropolis."},
+   {name:"Svalbard", country:"Norwegen", lat:78.2232, lon:15.6267,
+    scene:"Die arktische Landschaft rund um die Festung der Einsamkeit."}
+  ]},
+ {title:"Joker", year:2019, reihe:"DC", marke:"DC", genre:"Drama, Thriller", regie:"Todd Phillips", cast:"Joaquin Phoenix, Robert De Niro",
+  beschreibung:"Ein gescheiterter Komiker in Gotham wird zum Joker.",
+  places:[
+   {name:"Joker-Treppe, Bronx", country:"USA", lat:40.8364, lon:-73.9246,
+    scene:"Arthur tanzt im Anzug die Treppe hinunter."}
+  ]},
+ {title:"Joker: Folie à Deux", year:2024, reihe:"DC", marke:"DC", genre:"Drama, Musical", regie:"Todd Phillips", cast:"Joaquin Phoenix, Lady Gaga",
+  beschreibung:"Arthur Fleck wartet auf seinen Prozess und lernt in der Psychiatrie Lee kennen.",
+  places:[
+   {name:"Joker-Treppe, Bronx", country:"USA", lat:40.8366, lon:-73.9244,
+    scene:"Die berühmte Treppe kehrt zurück."}
+  ]},
+ {title:"The Batman", year:2022, reihe:"DC", marke:"DC", genre:"Superheldenfilm", regie:"Matt Reeves", cast:"Robert Pattinson, Zoë Kravitz, Paul Dano",
+  beschreibung:"In seinem zweiten Jahr als Batman jagt Bruce Wayne den Serienmörder Riddler.",
+  places:[
+   {name:"St George's Hall, Liverpool", country:"Vereinigtes Königreich", lat:53.4085, lon:-2.98,
+    scene:"Die Halle wurde zum Rathaus von Gotham."},
+   {name:"Glasgow", country:"Vereinigtes Königreich", lat:55.86, lon:-4.25,
+    scene:"Die Straßen dienten als Gotham."}
+  ]},
+ {title:"Hangover", year:2009, reihe:"Hangover", genre:"Komödie", regie:"Todd Phillips", cast:"Bradley Cooper, Ed Helms, Zach Galifianakis",
+  beschreibung:"Nach einem Junggesellenabschied in Las Vegas können sich drei Freunde an nichts erinnern – und der Bräutigam ist verschwunden.",
+  places:[
+   {name:"Caesars Palace, Las Vegas", country:"USA", lat:36.1162, lon:-115.1745,
+    scene:"Das Hotel, in dem die Freunde ihre Villa haben."}
+  ]},
+ {title:"Hangover 2", year:2011, reihe:"Hangover", genre:"Komödie", regie:"Todd Phillips", cast:"Bradley Cooper, Ed Helms, Zach Galifianakis",
+  beschreibung:"Diesmal wachen die Freunde in Bangkok auf – vor Stus Hochzeit.",
+  places:[
+   {name:"Sky Bar, Lebua State Tower, Bangkok", country:"Thailand", lat:13.7215, lon:100.5168,
+    scene:"Die Rooftop-Bar hoch über Bangkok."},
+   {name:"Railay, Krabi", country:"Thailand", lat:8.011, lon:98.838,
+    scene:"Der Ferienort, an dem Stu heiraten will."}
+  ]},
+ {title:"Hangover 3", year:2013, reihe:"Hangover", genre:"Komödie", regie:"Todd Phillips", cast:"Bradley Cooper, Ed Helms, Zach Galifianakis",
+  beschreibung:"Das Wolfsrudel muss Mr. Chow aufspüren, um Doug aus den Händen eines Gangsters zu befreien.",
+  places:[
+   {name:"Nogales, Arizona", country:"USA", lat:31.3404, lon:-110.9343,
+    scene:"Die Grenzstadt stand für Szenen in Mexiko."},
+   {name:"Caesars Palace, Las Vegas", country:"USA", lat:36.1165, lon:-115.1742,
+    scene:"Die Gruppe kehrt nach Las Vegas zurück."}
+  ]},
+ {title:"Reservoir Dogs", year:1992, genre:"Krimi, Thriller", regie:"Quentin Tarantino", cast:"Harvey Keitel, Tim Roth, Steve Buscemi",
+  beschreibung:"Nach einem missglückten Juwelenraub sammeln sich die Gangster in einem Lagerhaus und suchen den Verräter.",
+  places:[
+   {name:"Highland Park, Los Angeles", country:"USA", lat:34.112, lon:-118.193,
+    scene:"Gedreht in Lagerhallen und Straßen im Nordosten von LA."}
+  ]},
+ {title:"Pulp Fiction", year:1994, genre:"Krimi", regie:"Quentin Tarantino", cast:"John Travolta, Samuel L. Jackson, Uma Thurman",
+  beschreibung:"Mehrere Geschichten aus der Unterwelt von Los Angeles, verwoben in nicht-chronologischer Reihenfolge.",
+  places:[
+   {name:"Hawthorne Grill (abgerissen), Hawthorne", country:"USA", lat:33.907, lon:-118.352,
+    scene:"Das Diner des Überfalls am Anfang und Ende."}
+  ]},
+ {title:"Jackie Brown", year:1997, genre:"Krimi", regie:"Quentin Tarantino", cast:"Pam Grier, Samuel L. Jackson, Robert Forster",
+  beschreibung:"Eine Stewardess gerät zwischen einen Waffenhändler und die Polizei und plant einen eigenen Coup.",
+  places:[
+   {name:"Del Amo Fashion Center, Torrance", country:"USA", lat:33.8318, lon:-118.349,
+    scene:"Die Geldübergabe im Einkaufszentrum."}
+  ]},
+ {title:"Kill Bill: Volume 1", year:2003, genre:"Action", regie:"Quentin Tarantino", cast:"Uma Thurman, Lucy Liu",
+  beschreibung:"Eine Auftragskillerin erwacht aus dem Koma und nimmt Rache an ihren ehemaligen Kollegen.",
+  places:[
+   {name:"Beijing Film Studio", country:"China", lat:39.98, lon:116.35,
+    scene:"Das „Haus der blauen Blätter“ wurde in Peking gebaut."}
+  ]},
+ {title:"Kill Bill: Volume 2", year:2004, genre:"Action", regie:"Quentin Tarantino", cast:"Uma Thurman, David Carradine",
+  beschreibung:"Die Braut setzt ihren Rachefeldzug fort, bis sie Bill gegenübersteht.",
+  places:[
+   {name:"Two Pines Chapel, Mojave-Wüste bei Lancaster", country:"USA", lat:34.69, lon:-118.13,
+    scene:"Die Kapelle, in der das Massaker bei der Hochzeitsprobe geschah."}
+  ]},
+ {title:"Death Proof – Todsicher", year:2007, genre:"Thriller", regie:"Quentin Tarantino", cast:"Kurt Russell, Zoë Bell, Rosario Dawson",
+  beschreibung:"Ein Stuntman macht mit seinem „todsicheren“ Auto Jagd auf junge Frauen.",
+  places:[
+   {name:"Texas Chili Parlor, Austin", country:"USA", lat:30.278, lon:-97.741,
+    scene:"Die Bar, in der Stuntman Mike auf die Frauen trifft."}
+  ]},
+ {title:"Inglourious Basterds", year:2009, genre:"Kriegsfilm", regie:"Quentin Tarantino", cast:"Brad Pitt, Christoph Waltz, Mélanie Laurent",
+  beschreibung:"Eine jüdische Kommandoeinheit und eine Kinobesitzerin planen ein Attentat auf die Nazi-Führung.",
+  places:[
+   {name:"Studio Babelsberg, Potsdam", country:"Deutschland", lat:52.383, lon:13.12,
+    scene:"Große Teile des Films entstanden in Babelsberg."}
+  ]},
+ {title:"The Hateful 8", year:2015, genre:"Western", regie:"Quentin Tarantino", cast:"Samuel L. Jackson, Kurt Russell, Jennifer Jason Leigh",
+  beschreibung:"Acht Fremde sitzen während eines Schneesturms in einer Hütte fest – und einer von ihnen ist nicht, wer er vorgibt.",
+  places:[
+   {name:"Telluride, Colorado", country:"USA", lat:37.9375, lon:-107.8123,
+    scene:"Die verschneite Landschaft rund um die Hütte."}
+  ]},
+ {title:"Once Upon a Time in Hollywood", year:2019, genre:"Komödie, Drama", regie:"Quentin Tarantino", cast:"Leonardo DiCaprio, Brad Pitt, Margot Robbie",
+  beschreibung:"Ein abgehalfterter Westernstar und sein Stuntdouble im Hollywood des Jahres 1969.",
+  places:[
+   {name:"Musso & Frank Grill, Hollywood", country:"USA", lat:34.1016, lon:-118.3355,
+    scene:"Rick trifft sich mit Agent Marvin Schwarz."},
+   {name:"Corriganville Park, Simi Valley", country:"USA", lat:34.27, lon:-118.653,
+    scene:"Hier wurde die Spahn Ranch nachgebaut."}
   ]}
 ];
