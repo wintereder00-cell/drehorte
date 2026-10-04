@@ -67,13 +67,23 @@ main{position:relative;min-width:0;min-height:0}
 .leaflet-bar a{width:38px!important;height:38px!important;line-height:38px!important;font-size:20px!important}
 .leaflet-tooltip{font:500 13px Karla,sans-serif;border:0;box-shadow:var(--shadow)}
 
-.card{position:absolute;left:16px;bottom:28px;width:min(380px,calc(100% - 32px));background:var(--panel);border-radius:12px;box-shadow:var(--shadow);padding:18px 20px;border-top:5px solid var(--c);display:none;z-index:1000}
+.card{position:absolute;left:16px;bottom:28px;width:min(420px,calc(100% - 32px));max-height:calc(100% - 56px);overflow-y:auto;background:var(--panel);border-radius:12px;box-shadow:var(--shadow);padding:20px 22px;border-top:6px solid var(--c);display:none;z-index:1000}
 .card.open{display:block}
-.card h2{font:700 22px/1.15 "Zilla Slab",Georgia,serif;margin:0 0 2px;padding-right:28px}
-.card .film-line{color:var(--muted);margin:0 0 10px;font-size:14px}
-.card p{margin:0 0 12px}
-.card .links{display:flex;gap:16px;flex-wrap:wrap}
+.card h2{font:700 26px/1.1 "Zilla Slab",Georgia,serif;margin:0 0 4px;padding-right:32px}
+.card .meta{color:var(--muted);margin:0 0 12px;font-size:14px}
+.card .desc{margin:0 0 14px;max-width:62ch}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0 0 16px;font-size:14px}
+.facts dt{color:var(--muted)}
+.facts dd{margin:0}
+.card h3{font:700 17px/1.2 "Zilla Slab",Georgia,serif;margin:0 0 4px}
+.here{background:var(--paper);border-radius:10px;padding:14px 16px;margin:0 0 16px;border-left:4px solid var(--c)}
+.here p{margin:0 0 10px;font-size:14px}
+.card .links{display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
 .card a{color:var(--ink);font-weight:700;text-underline-offset:3px}
+.others ul{list-style:none;margin:6px 0 0;padding:0}
+.others button{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:9px 0;color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.others button:hover{color:var(--c)}
+.others button span{color:var(--muted)}
 .close{position:absolute;top:10px;right:10px;width:32px;height:32px;border:0;background:none;color:var(--muted);font-size:22px;cursor:pointer;border-radius:6px}
 
 @media (max-width:760px){
@@ -85,7 +95,8 @@ main{position:relative;min-width:0;min-height:0}
   .sub{display:none}
   .controls{margin-top:8px}
   .reset{margin:0 16px 10px}
-  .card{bottom:16px}
+  .card{bottom:12px;left:12px;width:calc(100% - 24px);max-height:calc(100% - 24px);padding:16px 18px}
+  .card h2{font-size:22px}
   .leaflet-control-layers{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -96,7 +107,7 @@ main{position:relative;min-width:0;min-height:0}
   <aside>
     <header>
       <h1>Drehorte in Europa</h1>
-      <p class="sub">Wo bekannte Filme gedreht wurden – auf echten Satellitenbildern. Film wählen oder direkt auf der Karte stöbern.</p>
+      <p class="sub" id="sub">Wo bekannte Filme gedreht wurden – auf echten Satellitenbildern. Film wählen oder direkt auf der Karte stöbern.</p>
       <div class="controls">
         <input class="search" id="q" type="search" placeholder="Film oder Ort suchen" aria-label="Film oder Ort suchen">
         <select class="country" id="country" aria-label="Land filtern"><option value="">Alle Länder</option></select>
@@ -107,15 +118,27 @@ main{position:relative;min-width:0;min-height:0}
   </aside>
   <main>
     <div id="map" aria-label="Karte von Europa mit Filmdrehorten"></div>
-    <div class="card" id="card" role="dialog" aria-live="polite">
+    <div class="card" id="card" role="dialog" aria-live="polite" aria-labelledby="cTitle">
       <button class="close" id="close" aria-label="Schließen">×</button>
       <h2 id="cTitle"></h2>
-      <p class="film-line" id="cFilm"></p>
-      <p id="cScene"></p>
-      <div class="links">
-        <a id="cZoom" href="#">Ganz nah heranzoomen</a>
-        <a id="cLink" target="_blank" rel="noopener">In Google Maps öffnen</a>
-      </div>
+      <p class="meta" id="cMeta"></p>
+      <p class="desc" id="cDesc"></p>
+      <dl class="facts">
+        <dt>Regie</dt><dd id="cRegie"></dd>
+        <dt>Mit</dt><dd id="cCast"></dd>
+      </dl>
+      <section class="here" id="cHere">
+        <h3 id="cPlace"></h3>
+        <p id="cScene"></p>
+        <div class="links">
+          <a id="cZoom" href="#">Ganz nah heranzoomen</a>
+          <a id="cLink" target="_blank" rel="noopener">In Google Maps öffnen</a>
+        </div>
+      </section>
+      <section class="others" id="cOthersWrap">
+        <h3 id="cOthersTitle"></h3>
+        <ul id="cOthers"></ul>
+      </section>
     </div>
   </main>
 </div>
@@ -123,10 +146,11 @@ main{position:relative;min-width:0;min-height:0}
 // ---------------------------------------------------------------
 // Daten vorbereiten: IDs und Farben automatisch vergeben
 // ---------------------------------------------------------------
-const PALETTE = ["#E0263F","#3D7DC4","#F0A202","#22A06B","#8A63C9","#11B5CF","#E06C9F","#B87333","#7FB800","#FF6B35","#5C6BC0","#00897B","#C2185B","#9E9D24"];
+// Farben gleichmäßig über den Farbkreis verteilen (goldener Winkel), damit benachbarte Filme gut unterscheidbar sind
+const autoColor = i => `hsl(${Math.round((i * 137.508) % 360)}, 72%, ${i % 2 ? 46 : 54}%)`;
 FILMS.forEach((f,i) => {
   f.id = "f" + i;
-  f.color = f.color || PALETTE[i % PALETTE.length];
+  f.color = f.color || autoColor(i);
   f.countries = [...new Set(f.places.map(p => p.country))];
 });
 const PINS = FILMS.flatMap(f => f.places.map(p => ({...p, film:f})));
@@ -176,7 +200,7 @@ PINS.forEach(d => {
   d.marker = L.marker([d.lat, d.lon], {
     icon: L.divIcon({className:"pin-icon", html:`<span style="--c:${d.film.color}"></span>`, iconSize:[24,24], iconAnchor:[12,12]}),
     keyboard:true, title:`${d.name} – ${d.film.title}`
-  }).bindTooltip(d.name, {direction:"top", offset:[0,-12]})
+  }).bindTooltip(`${d.film.title} (${d.film.year})`, {direction:"top", offset:[0,-12]})
     .on("click", () => openCard(d));
 });
 
@@ -222,7 +246,7 @@ function renderList(){
 }
 function selectFilm(id){
   activeFilm = id; closeCard(); renderList();
-  if (id) applyFilter(true);
+  if (id) { applyFilter(true); openFilm(FILMS.find(f => f.id === id)); }
   else { applyFilter(false); fitTo(PINS.filter(pinMatches)); }
 }
 document.getElementById("q").addEventListener("input", e => { query = e.target.value.trim(); renderList(); applyFilter(false); });
@@ -235,25 +259,62 @@ document.getElementById("reset").onclick = () => {
 // Infokarte
 // ---------------------------------------------------------------
 const card = document.getElementById("card");
-function openCard(d){
+const $ = id => document.getElementById(id);
+
+// Filmübersicht anzeigen; pin = angeklickter Drehort (optional)
+function openFilm(f, pin){
   if (activePin) activePin.marker.getElement()?.classList.remove("active");
-  activePin = d; d.marker.getElement()?.classList.add("active");
-  card.style.setProperty("--c", d.film.color);
-  document.getElementById("cTitle").textContent = d.name;
-  document.getElementById("cFilm").textContent = `${d.film.title} (${d.film.year}) – ${d.country}`;
-  document.getElementById("cScene").textContent = d.scene;
-  document.getElementById("cLink").href = `https://www.google.com/maps/search/?api=1&query=${d.lat},${d.lon}`;
+  activePin = pin || null;
+  if (pin) pin.marker.getElement()?.classList.add("active");
+
+  card.style.setProperty("--c", f.color);
+  $("cTitle").textContent = f.title;
+  $("cMeta").textContent = [f.year, f.genre, f.countries.join(", ")].filter(Boolean).join(", ");
+  $("cDesc").textContent = f.beschreibung || "";
+  $("cDesc").hidden = !f.beschreibung;
+  $("cRegie").textContent = f.regie || "–";
+  $("cCast").textContent = f.cast || "–";
+
+  $("cHere").hidden = !pin;
+  if (pin) {
+    $("cPlace").textContent = "Drehort: " + pin.name;
+    $("cScene").textContent = pin.scene;
+    $("cLink").href = `https://www.google.com/maps/search/?api=1&query=${pin.lat},${pin.lon}`;
+  }
+
+  const others = PINS.filter(p => p.film === f && p !== pin);
+  $("cOthersWrap").hidden = !others.length;
+  $("cOthersTitle").textContent = pin ? "Weitere Drehorte dieses Films" : "Drehorte dieses Films";
+  const ul = $("cOthers"); ul.innerHTML = "";
+  others.forEach(p => {
+    const li = document.createElement("li"), b = document.createElement("button");
+    b.innerHTML = `${p.name} <span>(${p.country})</span>`;
+    b.onclick = () => showPin(p);
+    li.appendChild(b); ul.appendChild(li);
+  });
+  card.scrollTop = 0;
   card.classList.add("open");
+}
+function openCard(d){ openFilm(d.film, d); }
+
+// Zu einem Drehort fliegen und ihn öffnen
+function showPin(p){
+  if (!cluster.hasLayer(p.marker)) { query = ""; country = ""; $("q").value = ""; sel.value = ""; applyFilter(false); renderList(); }
+  map.flyTo([p.lat, p.lon], 16, {duration:1.2});
+  map.once("moveend", () => cluster.zoomToShowLayer(p.marker, () => openFilm(p.film, p)));
 }
 function closeCard(){
   card.classList.remove("open");
   if (activePin) activePin.marker.getElement()?.classList.remove("active");
   activePin = null;
 }
-document.getElementById("cZoom").onclick = e => { e.preventDefault(); if (activePin) map.flyTo([activePin.lat, activePin.lon], 18, {duration:1.5}); };
+$("cZoom").onclick = e => { e.preventDefault(); if (activePin) map.flyTo([activePin.lat, activePin.lon], 18, {duration:1.5}); };
 document.getElementById("close").onclick = closeCard;
 map.on("click", closeCard);
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeCard(); });
+
+// Anzahl im Untertitel anzeigen
+$("sub").textContent = `${FILMS.length} Filme, ${PINS.length} Drehorte in ${COUNTRIES.length} Ländern – auf echten Satellitenbildern. Film wählen oder direkt auf der Karte stöbern.`;
 
 // Start: ganz Europa mit allen Orten
 map.fitBounds(L.latLngBounds(PINS.map(d => [d.lat, d.lon])), {padding:[40,40]});
