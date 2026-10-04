@@ -69,7 +69,7 @@ button{font:inherit;color:inherit}
 .results .empty{color:var(--muted);cursor:default;padding:14px 10px}
 .results .empty:hover{background:none}
 
-.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px;margin:-2px}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 24px 2px 2px;margin:-2px;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent);scroll-behavior:smooth}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;height:36px;padding:0 14px;border-radius:999px;border:0;background:var(--surface);box-shadow:var(--shadow-sm);font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
 .chip:hover{background:var(--surface-2)}
@@ -108,6 +108,14 @@ body.panel-open .panel{transform:none}
 .btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:9px;border:0;background:var(--surface);box-shadow:var(--shadow-sm);font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;color:var(--ink)}
 .btn:hover{background:var(--ink);color:var(--surface)}
 .btn svg{width:15px;height:15px}
+.photo-wrap{margin:-4px -6px 14px}
+.photo{aspect-ratio:3/2;border-radius:10px;overflow:hidden;background:linear-gradient(100deg,var(--line) 30%,rgba(255,255,255,.35) 50%,var(--line) 70%) 0 0/300% 100%;animation:shimmer 1.4s linear infinite}
+.photo.ready{animation:none;background:var(--line)}
+.photo img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .35s}
+.photo img.loaded{opacity:1}
+.photo-wrap figcaption{font-size:11.5px;line-height:1.4;color:var(--muted);padding:7px 2px 0}
+.photo-wrap figcaption a{color:inherit}
+@keyframes shimmer{to{background-position:-300% 0}}
 .list-h{font-size:14px;font-weight:600;margin:0 0 6px}
 .places{list-style:none;margin:0;padding:0}
 .places button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:11px 2px;cursor:pointer;font-size:14px}
@@ -198,10 +206,15 @@ body.panel-open .panel{transform:none}
       <dt>Gedreht in</dt><dd id="pCountries"></dd>
     </dl>
     <section class="here" id="pHere">
+      <figure class="photo-wrap" id="pPhotoWrap">
+        <div class="photo"><img id="pPhoto" alt=""></div>
+        <figcaption id="pPhotoCap"></figcaption>
+      </figure>
       <h3><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span id="pPlace"></span></h3>
       <p id="pScene"></p>
       <div class="actions">
         <button class="btn" id="pZoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M11 8v6M8 11h6"/></svg>Heranzoomen</button>
+        <a class="btn" id="pYt" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>Szene auf YouTube suchen</a>
         <a class="btn" id="pMaps" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>Google Maps</a>
       </div>
     </section>
@@ -229,13 +242,23 @@ FILMS.forEach((f, i) => {
 const PINS = FILMS.flatMap(f => f.places.map((p, i) => ({...p, film:f, idx:i, key:norm(p.name + " " + p.country)})));
 const byId = Object.fromEntries(FILMS.map(f => [f.id, f]));
 
+const R = name => f => f.reihe === name;
 const COLLECTIONS = [
   {id:"alle", label:"Alle Filme", test:() => true},
-  {id:"nolan", label:"Christopher Nolan", test:f => /Nolan/.test(f.regie)},
-  {id:"scorsese", label:"Martin Scorsese", test:f => /Scorsese/.test(f.regie)},
-  {id:"starwars", label:"Star Wars", test:f => f.reihe === "Star Wars"},
-  {id:"bond", label:"James Bond", test:f => f.reihe === "James Bond"},
-  {id:"pate", label:"Der Pate", test:f => f.reihe === "Der Pate"},
+  {id:"starwars", label:"Star Wars", test:R("Star Wars")},
+  {id:"potter", label:"Harry Potter", test:R("Harry Potter")},
+  {id:"mittelerde", label:"Herr der Ringe & Hobbit", test:f => f.reihe === "Herr der Ringe" || f.reihe === "Der Hobbit"},
+  {id:"pate", label:"Der Pate", test:R("Der Pate")},
+  {id:"bond", label:"James Bond", test:R("James Bond")},
+  {id:"indy", label:"Indiana Jones", test:R("Indiana Jones")},
+  {id:"mi", label:"Mission: Impossible", test:R("Mission: Impossible")},
+  {id:"batman", label:"The Dark Knight", test:R("The Dark Knight")},
+  {id:"matrix", label:"Matrix", test:R("Matrix")},
+  {id:"bttf", label:"Zurück in die Zukunft", test:R("Zurück in die Zukunft")},
+  {id:"jp", label:"Jurassic Park", test:R("Jurassic Park")},
+  {id:"pirates", label:"Fluch der Karibik", test:R("Fluch der Karibik")},
+  {id:"bourne", label:"Bourne", test:R("Bourne")},
+  {id:"before", label:"Before-Trilogie", test:R("Before-Trilogie")},
 ];
 const REGIONS = {
   europa:[[35,-11],[66,40]],
@@ -338,11 +361,78 @@ COLLECTIONS.forEach(c => {
   b.onclick = () => setCollection(c, true);
   $("chips").appendChild(b);
 });
+// Chips mit dem Mausrad seitlich scrollen
+$("chips").addEventListener("wheel", e => {
+  if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { $("chips").scrollLeft += e.deltaY; e.preventDefault(); }
+}, {passive:false});
 function setCollection(c, fit){
   collection = c; filmOnly = null; closePanel(false);
   document.querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", b.dataset.id === c.id));
   const pins = applyFilter();
   if (fit) c.id === "alle" ? map.flyTo([38, -30], 2.75, {duration:1.1}) : fitPins(pins, 8);
+}
+
+// ---------------------------------------------------------------
+// Foto vom Drehort (frei lizenzierte Bilder über Wikipedia/Wikimedia)
+// ---------------------------------------------------------------
+const WIKI = "https://en.wikipedia.org/w/api.php?format=json&origin=*&action=query&";
+const photoCache = new Map();
+const km = (a, b, c, d) => {
+  const r = x => x * Math.PI / 180, dl = r(c - a), dn = r(d - b);
+  const h = Math.sin(dl / 2) ** 2 + Math.cos(r(a)) * Math.cos(r(c)) * Math.sin(dn / 2) ** 2;
+  return 12742 * Math.asin(Math.sqrt(h));
+};
+const wiki = params => fetch(WIKI + new URLSearchParams(params)).then(r => r.json());
+const plain = html => new DOMParser().parseFromString(html || "", "text/html").body.textContent.trim();
+
+function findPhoto(p){
+  const key = p.name + "|" + p.lat + "|" + p.lon;
+  if (photoCache.has(key)) return photoCache.get(key);
+  const job = (async () => {
+    try {
+      const common = {prop:"pageimages|coordinates", piprop:"thumbnail|name", pithumbsize:"900", colimit:"max"};
+      let hit = null;
+      // 1. Wikipedia-Artikel zum Ortsnamen, der wirklich an diesem Ort liegt
+      const s = await wiki({...common, generator:"search", gsrsearch:p.name.split(",")[0], gsrlimit:"6"});
+      for (const pg of Object.values(s.query?.pages || {}).sort((a, b) => a.index - b.index)) {
+        const c = pg.coordinates?.[0];
+        if (pg.thumbnail && c && km(p.lat, p.lon, c.lat, c.lon) < 3) { hit = {pg, exact:true}; break; }
+      }
+      // 2. Sonst: nächstgelegener Artikel mit Foto im Umkreis von 500 m
+      if (!hit) {
+        const g = await wiki({...common, generator:"geosearch", ggscoord:`${p.lat}|${p.lon}`, ggsradius:"500", ggslimit:"15"});
+        const near = Object.values(g.query?.pages || {}).filter(x => x.thumbnail && x.coordinates)
+          .sort((a, b) => km(p.lat, p.lon, a.coordinates[0].lat, a.coordinates[0].lon) - km(p.lat, p.lon, b.coordinates[0].lat, b.coordinates[0].lon));
+        if (near[0]) hit = {pg:near[0], exact:false};
+      }
+      if (!hit) return null;
+      const info = await wiki({prop:"imageinfo", iiprop:"extmetadata|url", titles:"File:" + hit.pg.pageimage});
+      const ii = Object.values(info.query?.pages || {})[0]?.imageinfo?.[0] || {};
+      const m = ii.extmetadata || {};
+      return {src:hit.pg.thumbnail.source, title:hit.pg.title, exact:hit.exact,
+        artist:plain(m.Artist?.value).slice(0, 80), license:plain(m.LicenseShortName?.value), page:ii.descriptionurl};
+    } catch (e) { return null; }
+  })();
+  photoCache.set(key, job);
+  return job;
+}
+function showPhoto(pin){
+  const wrap = $("pPhotoWrap"), img = $("pPhoto"), box = img.parentNode, cap = $("pPhotoCap");
+  wrap.hidden = false; box.classList.remove("ready"); img.classList.remove("loaded"); img.removeAttribute("src"); cap.textContent = "";
+  findPhoto(pin).then(res => {
+    if (currentPin !== pin) return;
+    if (!res) { wrap.hidden = true; return; }
+    img.onload = () => { img.classList.add("loaded"); box.classList.add("ready"); };
+    img.onerror = () => { wrap.hidden = true; };
+    img.src = res.src;
+    img.alt = res.title;
+    cap.innerHTML = "";
+    cap.append(res.exact ? `So sieht ${res.title} heute aus. ` : `Foto aus der direkten Umgebung (${res.title}). `);
+    const a = document.createElement("a");
+    a.href = res.page || "#"; a.target = "_blank"; a.rel = "noopener";
+    a.textContent = [res.artist, res.license].filter(Boolean).join(", ") || "Wikimedia Commons";
+    cap.append("Foto: ", a);
+  });
 }
 
 // ---------------------------------------------------------------
@@ -369,6 +459,7 @@ function openFilm(f, pin, opts = {}){
     $("pPlace").textContent = pin.name;
     $("pScene").textContent = pin.scene;
     $("pMaps").href = `https://www.google.com/maps/search/?api=1&query=${pin.lat},${pin.lon}`;
+    $("pYt").href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(`${f.title} ${f.year} ${pin.name.split(",")[0]} Szene`);
   }
 
   const n = f.places.length;
@@ -384,6 +475,7 @@ function openFilm(f, pin, opts = {}){
     li.appendChild(b); ul.appendChild(li);
   });
 
+  if (pin) showPhoto(pin);
   $("pBody").scrollTop = 0;
   document.body.classList.add("panel-open");
   panel.setAttribute("aria-hidden", "false");
