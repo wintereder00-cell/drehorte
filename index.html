@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Drehorte in Europa – Filmkarte</title>
-<meta name="description" content="Interaktive Satellitenkarte bekannter Filmdrehorte in Europa.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+<title>Drehorte – Die Karte der Filmschauplätze</title>
+<meta name="description" content="Interaktive Satellitenkarte mit den Drehorten bekannter Filme in Europa, den USA und der ganzen Welt.">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='11' fill='%23E2462F'/><circle cx='16' cy='16' r='5' fill='white'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;700&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -17,309 +18,522 @@
 <script>
 // ===============================================================
 // EINSTELLUNGEN
-// Trag hier deinen MapTiler-Key ein (kostenlos auf maptiler.com).
-// Leer lassen = Esri-Satellitenbilder als Ersatz (gut zum Testen).
+// MapTiler-Key (kostenlos auf maptiler.com) für Satellitenbilder.
+// Leer lassen = Esri-Satellitenbilder als Ersatz.
 // ===============================================================
 const MAPTILER_KEY = "";
 </script>
 <style>
 :root{
-  --paper:#E6ECEE; --ink:#1D2B3A; --muted:#5B6A78; --panel:#FFFFFF; --line:#C9D3D8; --red:#C8102E;
-  --shadow:0 6px 24px rgba(29,43,58,.18);
+  --surface:#FFFFFF; --surface-2:#F4F5F7; --ink:#1A1D21; --muted:#656C75; --faint:#9AA1A9;
+  --line:rgba(26,29,33,.09); --accent:#E2462F; --focus:#2F6BFF;
+  --shadow-sm:0 1px 2px rgba(20,24,30,.08),0 2px 6px rgba(20,24,30,.06);
+  --shadow-lg:0 2px 4px rgba(20,24,30,.06),0 12px 32px rgba(20,24,30,.16);
+  --panel-w:420px; --ease:cubic-bezier(.22,.8,.24,1);
   box-sizing:border-box;
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){--paper:#132029;--ink:#E8EEF1;--muted:#9AAAB6;--panel:#1A2934;--line:#2D404D;--shadow:0 6px 24px rgba(0,0,0,.45)}
+  :root:not([data-theme="light"]){--surface:#1C1F24;--surface-2:#262A30;--ink:#ECEEF0;--muted:#A3AAB2;--faint:#6E757D;--line:rgba(255,255,255,.08);--shadow-sm:0 1px 2px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.3);--shadow-lg:0 2px 4px rgba(0,0,0,.3),0 12px 32px rgba(0,0,0,.5)}
 }
-:root[data-theme="dark"]{--paper:#132029;--ink:#E8EEF1;--muted:#9AAAB6;--panel:#1A2934;--line:#2D404D;--shadow:0 6px 24px rgba(0,0,0,.45)}
+:root[data-theme="dark"]{--surface:#1C1F24;--surface-2:#262A30;--ink:#ECEEF0;--muted:#A3AAB2;--faint:#6E757D;--line:rgba(255,255,255,.08);--shadow-sm:0 1px 2px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.3);--shadow-lg:0 2px 4px rgba(0,0,0,.3),0 12px 32px rgba(0,0,0,.5)}
 *,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none!important}
 html,body{height:100%;margin:0}
-body{background:var(--paper);color:var(--ink);font:400 15px/1.5 Karla,"Helvetica Neue",Arial,sans-serif;overflow:hidden}
-.app{display:grid;grid-template-columns:350px 1fr;height:100%;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-aside{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;z-index:2}
-header{padding:22px 22px 14px}
-h1{font:700 30px/1.05 "Zilla Slab",Georgia,serif;margin:0 0 6px;letter-spacing:-.01em}
-.sub{color:var(--muted);margin:0;font-size:14px}
-.controls{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:14px}
-.search,.country{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font:inherit;min-width:0}
-.search:focus-visible,.country:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--red);outline-offset:2px}
-.films{list-style:none;margin:0;padding:4px 10px 16px;overflow-y:auto;flex:1}
-.film{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:10px 12px;color:inherit;font:inherit;cursor:pointer}
-.film:hover{background:var(--paper)}
-.film[aria-pressed="true"]{background:var(--paper);box-shadow:inset 3px 0 0 var(--c)}
-.dot{width:12px;height:12px;border-radius:50%;background:var(--c);border:2px solid var(--panel);box-shadow:0 0 0 1px var(--c)}
-.ft{font:500 17px/1.2 "Zilla Slab",Georgia,serif}
-.fy,.cnt{color:var(--muted);font-size:13px}
-.cnt{font-variant-numeric:tabular-nums;text-align:right}
-.reset{margin:0 22px 18px;padding:10px;border:1px solid var(--line);border-radius:8px;background:none;color:var(--ink);font:500 14px Karla,sans-serif;cursor:pointer}
-.reset:hover{background:var(--paper)}
-.empty{padding:16px 12px;color:var(--muted)}
-main{position:relative;min-width:0;min-height:0}
-#map{position:absolute;inset:0;background:#2b3a44}
+body{background:#0E1114;color:var(--ink);font:400 15px/1.5 "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+#map{position:fixed;inset:0;background:#0E1114}
 
-.pin-icon{background:none;border:0}
-.pin-icon span{display:block;width:18px;height:18px;border-radius:50%;background:var(--c);border:3px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.55);transition:transform .12s}
-.pin-icon:hover span,.pin-icon.active span{transform:scale(1.3)}
-.cluster{background:none;border:0}
-.cluster div{width:38px;height:38px;border-radius:50%;background:#fff;color:#1D2B3A;display:grid;place-items:center;font:700 14px Karla,sans-serif;box-shadow:0 0 0 4px rgba(255,255,255,.45),0 2px 8px rgba(0,0,0,.5)}
-.leaflet-control-layers{border:0!important;border-radius:8px!important;box-shadow:var(--shadow)!important;font:500 14px Karla,sans-serif}
-.leaflet-bar{border:0!important;box-shadow:var(--shadow)!important}
-.leaflet-bar a{width:38px!important;height:38px!important;line-height:38px!important;font-size:20px!important}
-.leaflet-tooltip{font:500 13px Karla,sans-serif;border:0;box-shadow:var(--shadow)}
+/* ---------- Suche (oben links) ---------- */
+.top{position:fixed;z-index:500;top:calc(14px + env(safe-area-inset-top,0px));left:14px;width:min(400px,calc(100% - 28px));display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.top > *{pointer-events:auto}
+.search{position:relative;background:var(--surface);border-radius:14px;box-shadow:var(--shadow-lg)}
+.search-row{display:flex;align-items:center;height:52px;padding:0 6px 0 16px;gap:10px}
+.brand{width:22px;height:22px;flex:none}
+.search input{flex:1;min-width:0;border:0;background:none;color:var(--ink);font:500 16px "Instrument Sans",sans-serif;height:100%;outline:none}
+.search input::placeholder{color:var(--faint);font-weight:400}
+.icon-btn{width:40px;height:40px;border:0;border-radius:10px;background:none;display:grid;place-items:center;cursor:pointer;color:var(--muted);flex:none}
+.icon-btn:hover{background:var(--surface-2);color:var(--ink)}
+.icon-btn svg{width:20px;height:20px}
+#clear{visibility:hidden}
+.search.has-text #clear{visibility:visible}
+.results{list-style:none;margin:0;padding:6px;border-top:1px solid var(--line);max-height:min(60vh,440px);overflow-y:auto;display:none}
+.search.open .results{display:block}
+.results li{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:9px;cursor:pointer}
+.results li[aria-selected="true"],.results li:hover{background:var(--surface-2)}
+.r-dot{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none;margin:0 3px}
+.r-pin{width:16px;height:16px;flex:none;color:var(--faint)}
+.r-text{min-width:0;flex:1}
+.r-title{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r-sub{display:block;font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.results .empty{color:var(--muted);cursor:default;padding:14px 10px}
+.results .empty:hover{background:none}
 
-.card{position:absolute;left:16px;bottom:28px;width:min(420px,calc(100% - 32px));max-height:calc(100% - 56px);overflow-y:auto;background:var(--panel);border-radius:12px;box-shadow:var(--shadow);padding:20px 22px;border-top:6px solid var(--c);display:none;z-index:1000}
-.card.open{display:block}
-.card h2{font:700 26px/1.1 "Zilla Slab",Georgia,serif;margin:0 0 4px;padding-right:32px}
-.card .meta{color:var(--muted);margin:0 0 12px;font-size:14px}
-.card .desc{margin:0 0 14px;max-width:62ch}
-.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0 0 16px;font-size:14px}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px;margin:-2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:36px;padding:0 14px;border-radius:999px;border:0;background:var(--surface);box-shadow:var(--shadow-sm);font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+.chip:hover{background:var(--surface-2)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.count{font-size:13px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7);padding-left:4px}
+
+/* ---------- Steuerung (unten rechts) ---------- */
+.controls{position:fixed;z-index:500;right:14px;bottom:calc(30px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:flex-end;gap:10px;transition:transform .45s var(--ease)}
+body.panel-open .controls{transform:translateX(calc(-1 * (var(--panel-w) + 14px)))}
+.stack{display:flex;flex-direction:column;background:var(--surface);border-radius:12px;box-shadow:var(--shadow-lg);overflow:hidden}
+.stack .icon-btn{border-radius:0;width:44px;height:44px}
+.stack .icon-btn + .icon-btn{border-top:1px solid var(--line)}
+.seg{display:flex;background:var(--surface);border-radius:12px;box-shadow:var(--shadow-lg);padding:4px;gap:2px}
+.seg button{border:0;background:none;height:34px;padding:0 12px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface-2);color:var(--ink)}
+
+/* ---------- Detail-Panel ---------- */
+.panel{position:fixed;z-index:600;top:14px;right:14px;bottom:14px;width:var(--panel-w);background:var(--surface);border-radius:18px;box-shadow:var(--shadow-lg);display:flex;flex-direction:column;overflow:hidden;transform:translateX(calc(100% + 28px));transition:transform .45s var(--ease);will-change:transform}
+body.panel-open .panel{transform:none}
+.panel-bar{height:5px;background:var(--c);flex:none}
+.panel .close{position:absolute;top:16px;right:12px;background:var(--surface);z-index:2}
+.grab{display:none}
+.panel-body{overflow-y:auto;padding:24px 26px 28px;flex:1;overscroll-behavior:contain}
+.p-reihe{display:inline-block;font-size:13px;font-weight:500;color:var(--muted);margin:0 0 6px}
+.p-title{font:400 34px/1.08 "Instrument Serif",Georgia,serif;margin:0 44px 8px 0;letter-spacing:-.005em}
+.p-meta{color:var(--muted);margin:0 0 18px;font-size:14px}
+.p-desc{margin:0 0 20px;font-size:15px;line-height:1.6}
+.facts{display:grid;grid-template-columns:88px 1fr;gap:8px 12px;margin:0 0 24px;font-size:14px}
 .facts dt{color:var(--muted)}
 .facts dd{margin:0}
-.card h3{font:700 17px/1.2 "Zilla Slab",Georgia,serif;margin:0 0 4px}
-.here{background:var(--paper);border-radius:10px;padding:14px 16px;margin:0 0 16px;border-left:4px solid var(--c)}
-.here p{margin:0 0 10px;font-size:14px}
-.card .links{display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
-.card a{color:var(--ink);font-weight:700;text-underline-offset:3px}
-.others ul{list-style:none;margin:6px 0 0;padding:0}
-.others button{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:9px 0;color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
-.others button:hover{color:var(--c)}
-.others button span{color:var(--muted)}
-.close{position:absolute;top:10px;right:10px;width:32px;height:32px;border:0;background:none;color:var(--muted);font-size:22px;cursor:pointer;border-radius:6px}
+.here{background:var(--surface-2);border-radius:14px;padding:16px 18px;margin:0 0 26px}
+.here h3{display:flex;gap:8px;align-items:flex-start;font-size:16px;font-weight:600;margin:0 0 6px;line-height:1.35}
+.here h3 svg{width:18px;height:18px;flex:none;color:var(--c);margin-top:1px}
+.here p{margin:0 0 14px;font-size:14px;line-height:1.55;color:var(--ink)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:9px;border:0;background:var(--surface);box-shadow:var(--shadow-sm);font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;color:var(--ink)}
+.btn:hover{background:var(--ink);color:var(--surface)}
+.btn svg{width:15px;height:15px}
+.list-h{font-size:14px;font-weight:600;margin:0 0 6px}
+.places{list-style:none;margin:0;padding:0}
+.places button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:11px 2px;cursor:pointer;font-size:14px}
+.places li:last-child button{border-bottom:0}
+.places button:hover .pl-name{text-decoration:underline;text-underline-offset:3px}
+.places button[aria-current="true"]{font-weight:600}
+.pl-dot{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none;opacity:.35}
+.places button[aria-current="true"] .pl-dot{opacity:1}
+.pl-name{flex:1;min-width:0}
+.pl-country{color:var(--muted);font-size:13px;flex:none}
 
+/* ---------- Pins & Cluster ---------- */
+.pin{background:none;border:0}
+.pin i{display:block;width:16px;height:16px;margin:3px;border-radius:50%;background:var(--c);border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);transition:transform .18s var(--ease)}
+.pin:hover i{transform:scale(1.25)}
+.pin.active i{transform:scale(1.45);box-shadow:0 0 0 5px rgba(255,255,255,.45),0 1px 6px rgba(0,0,0,.5)}
+.cl{background:none;border:0}
+.cl div{width:100%;height:100%;border-radius:50%;background:rgba(255,255,255,.96);color:#1A1D21;display:grid;place-items:center;font:600 13px "Instrument Sans",sans-serif;box-shadow:0 0 0 5px rgba(255,255,255,.28),0 2px 8px rgba(0,0,0,.4);transition:transform .18s var(--ease)}
+.cl:hover div{transform:scale(1.08)}
+.leaflet-tooltip.tt{background:var(--surface);color:var(--ink);border:0;border-radius:8px;box-shadow:var(--shadow-lg);padding:6px 10px;font:500 13px "Instrument Sans",sans-serif}
+.leaflet-tooltip.tt::before{display:none}
+.leaflet-tooltip.tt small{color:var(--muted);font-weight:400}
+.leaflet-control-attribution{font:11px "Instrument Sans",sans-serif;background:rgba(255,255,255,.75)!important;border-radius:6px 0 0 0}
+.leaflet-container{font-family:"Instrument Sans",sans-serif}
+.leaflet-fade-anim .leaflet-tile{transition:opacity .35s linear}
+
+/* ---------- Mobil ---------- */
 @media (max-width:760px){
-  .app{grid-template-columns:1fr;grid-template-rows:1fr 45%}
-  main{grid-row:1}
-  aside{grid-row:2;border-right:0;border-top:1px solid var(--line)}
-  header{padding:14px 16px 8px}
-  h1{font-size:23px}
-  .sub{display:none}
-  .controls{margin-top:8px}
-  .reset{margin:0 16px 10px}
-  .card{bottom:12px;left:12px;width:calc(100% - 24px);max-height:calc(100% - 24px);padding:16px 18px}
-  .card h2{font-size:22px}
-  .leaflet-control-layers{display:none}
+  :root{--panel-w:100vw}
+  .top{left:10px;top:calc(10px + env(safe-area-inset-top,0px));width:calc(100% - 20px)}
+  .controls{right:10px;bottom:calc(26px + env(safe-area-inset-bottom,0px))}
+  body.panel-open .controls{transform:none;opacity:0;pointer-events:none}
+  .panel{top:auto;left:0;right:0;bottom:0;width:auto;height:68vh;border-radius:20px 20px 0 0;transform:translateY(102%)}
+  .grab{display:block;width:40px;height:4px;border-radius:2px;background:var(--line);margin:8px auto 0;flex:none}
+  .panel-bar{display:none}
+  .panel .close{top:12px}
+  .panel-body{padding:14px 20px calc(24px + env(safe-area-inset-bottom,0px))}
+  .p-title{font-size:28px}
+  .seg-region{display:none}
 }
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
-<div class="app">
-  <aside>
-    <header>
-      <h1>Drehorte in Europa</h1>
-      <p class="sub" id="sub">Wo bekannte Filme gedreht wurden – auf echten Satellitenbildern. Film wählen oder direkt auf der Karte stöbern.</p>
-      <div class="controls">
-        <input class="search" id="q" type="search" placeholder="Film oder Ort suchen" aria-label="Film oder Ort suchen">
-        <select class="country" id="country" aria-label="Land filtern"><option value="">Alle Länder</option></select>
-      </div>
-    </header>
-    <ul class="films" id="films"></ul>
-    <button class="reset" id="reset">Alle Filme zeigen</button>
-  </aside>
-  <main>
-    <div id="map" aria-label="Karte von Europa mit Filmdrehorten"></div>
-    <div class="card" id="card" role="dialog" aria-live="polite" aria-labelledby="cTitle">
-      <button class="close" id="close" aria-label="Schließen">×</button>
-      <h2 id="cTitle"></h2>
-      <p class="meta" id="cMeta"></p>
-      <p class="desc" id="cDesc"></p>
-      <dl class="facts">
-        <dt>Regie</dt><dd id="cRegie"></dd>
-        <dt>Mit</dt><dd id="cCast"></dd>
-      </dl>
-      <section class="here" id="cHere">
-        <h3 id="cPlace"></h3>
-        <p id="cScene"></p>
-        <div class="links">
-          <a id="cZoom" href="#">Ganz nah heranzoomen</a>
-          <a id="cLink" target="_blank" rel="noopener">In Google Maps öffnen</a>
-        </div>
-      </section>
-      <section class="others" id="cOthersWrap">
-        <h3 id="cOthersTitle"></h3>
-        <ul id="cOthers"></ul>
-      </section>
+<div id="map" role="application" aria-label="Karte mit Filmdrehorten"></div>
+
+<div class="top">
+  <div class="search" id="search">
+    <div class="search-row">
+      <svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="#E2462F"/><circle cx="12" cy="12" r="3.6" fill="#fff"/></svg>
+      <input id="q" type="text" autocomplete="off" spellcheck="false" placeholder="Film, Ort oder Regie suchen" role="combobox" aria-expanded="false" aria-controls="results" aria-label="Film, Ort oder Regie suchen">
+      <button class="icon-btn" id="clear" aria-label="Suche leeren"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
-  </main>
+    <ul class="results" id="results" role="listbox"></ul>
+  </div>
+  <div class="chips" id="chips" role="toolbar" aria-label="Sammlungen"></div>
+  <div class="count" id="count"></div>
 </div>
+
+<div class="controls">
+  <div class="seg seg-region" role="group" aria-label="Region">
+    <button data-region="europa">Europa</button>
+    <button data-region="usa">USA</button>
+    <button data-region="welt">Welt</button>
+  </div>
+  <div class="seg" role="group" aria-label="Kartenansicht">
+    <button data-layer="sat" aria-pressed="true">Satellit</button>
+    <button data-layer="map" aria-pressed="false">Karte</button>
+  </div>
+  <div class="stack">
+    <button class="icon-btn" id="zin" aria-label="Hineinzoomen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button class="icon-btn" id="zout" aria-label="Herauszoomen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+  </div>
+</div>
+
+<aside class="panel" id="panel" aria-hidden="true" aria-labelledby="pTitle">
+  <div class="grab"></div>
+  <div class="panel-bar"></div>
+  <button class="icon-btn close" id="close" aria-label="Schließen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <div class="panel-body" id="pBody">
+    <span class="p-reihe" id="pReihe"></span>
+    <h2 class="p-title" id="pTitle"></h2>
+    <p class="p-meta" id="pMeta"></p>
+    <p class="p-desc" id="pDesc"></p>
+    <dl class="facts">
+      <dt>Regie</dt><dd id="pRegie"></dd>
+      <dt>Mit</dt><dd id="pCast"></dd>
+      <dt>Gedreht in</dt><dd id="pCountries"></dd>
+    </dl>
+    <section class="here" id="pHere">
+      <h3><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span id="pPlace"></span></h3>
+      <p id="pScene"></p>
+      <div class="actions">
+        <button class="btn" id="pZoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M11 8v6M8 11h6"/></svg>Heranzoomen</button>
+        <a class="btn" id="pMaps" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>Google Maps</a>
+      </div>
+    </section>
+    <h3 class="list-h" id="pListH"></h3>
+    <ul class="places" id="pList"></ul>
+  </div>
+</aside>
+
 <script>
+(() => {
 // ---------------------------------------------------------------
-// Daten vorbereiten: IDs und Farben automatisch vergeben
+// Daten vorbereiten
 // ---------------------------------------------------------------
-// Farben gleichmäßig über den Farbkreis verteilen (goldener Winkel), damit benachbarte Filme gut unterscheidbar sind
-const autoColor = i => `hsl(${Math.round((i * 137.508) % 360)}, 72%, ${i % 2 ? 46 : 54}%)`;
-FILMS.forEach((f,i) => {
-  f.id = "f" + i;
+const $ = id => document.getElementById(id);
+const norm = s => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+const slug = s => norm(s).replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+const autoColor = i => `hsl(${Math.round((i * 137.508) % 360)}, 74%, ${i % 2 ? 47 : 55}%)`;
+
+FILMS.forEach((f, i) => {
+  f.id = slug(f.title) + "-" + f.year;
   f.color = f.color || autoColor(i);
   f.countries = [...new Set(f.places.map(p => p.country))];
+  f.key = norm([f.title, f.regie, f.cast, f.genre, f.reihe, f.year].join(" "));
 });
-const PINS = FILMS.flatMap(f => f.places.map(p => ({...p, film:f})));
-const COUNTRIES = [...new Set(PINS.map(p => p.country))].sort((a,b) => a.localeCompare(b,"de"));
+const PINS = FILMS.flatMap(f => f.places.map((p, i) => ({...p, film:f, idx:i, key:norm(p.name + " " + p.country)})));
+const byId = Object.fromEntries(FILMS.map(f => [f.id, f]));
+
+const COLLECTIONS = [
+  {id:"alle", label:"Alle Filme", test:() => true},
+  {id:"nolan", label:"Christopher Nolan", test:f => /Nolan/.test(f.regie)},
+  {id:"scorsese", label:"Martin Scorsese", test:f => /Scorsese/.test(f.regie)},
+  {id:"starwars", label:"Star Wars", test:f => f.reihe === "Star Wars"},
+  {id:"bond", label:"James Bond", test:f => f.reihe === "James Bond"},
+  {id:"pate", label:"Der Pate", test:f => f.reihe === "Der Pate"},
+];
+const REGIONS = {
+  europa:[[35,-11],[66,40]],
+  usa:[[25,-125],[49,-67]],
+};
 
 // ---------------------------------------------------------------
-// Kartenebenen
+// Karte
 // ---------------------------------------------------------------
-let satellit, satellitMitNamen;
+const tileOpts = {updateWhenZooming:false, keepBuffer:4, crossOrigin:true};
+let sat, map2;
 if (MAPTILER_KEY) {
+  const attr = '<a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>';
   const mt = s => `https://api.maptiler.com/maps/${s}/{z}/{x}/{y}.jpg?key=${MAPTILER_KEY}`;
-  const mtOpts = {tileSize:512, zoomOffset:-1, maxZoom:20, crossOrigin:true,
-    attribution:'<a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap-Mitwirkende</a>'};
-  satellit = L.tileLayer(mt("satellite"), mtOpts);
-  satellitMitNamen = L.tileLayer(mt("hybrid"), mtOpts);
+  sat = L.tileLayer(mt("hybrid"), {...tileOpts, tileSize:512, zoomOffset:-1, maxZoom:20, attribution:attr});
 } else {
-  const esriAttr = 'Bilder © Esri, Maxar, Earthstar Geographics und die GIS User Community';
-  satellit = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {maxZoom:20, maxNativeZoom:18, attribution:esriAttr});
-  const namen = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", {maxZoom:20, maxNativeZoom:18});
-  satellitMitNamen = L.layerGroup([L.tileLayer(satellit._url, satellit.options), namen]);
+  const attr = "Bilder © Esri, Maxar, Earthstar Geographics";
+  sat = L.layerGroup([
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {...tileOpts, maxZoom:20, maxNativeZoom:18, attribution:attr}),
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", {...tileOpts, maxZoom:20, maxNativeZoom:18})
+  ]);
 }
-const strasse = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom:19,
-  attribution:'<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap-Mitwirkende</a>'});
-// Österreich in sehr hoher Auflösung (optional zuschaltbar)
-const basemapAT = L.tileLayer("https://mapsneu.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg", {
-  maxZoom:20, maxNativeZoom:19, bounds:L.latLngBounds([46.35,8.78],[49.04,17.19]),
-  attribution:'Österreich: <a href="https://basemap.at" target="_blank" rel="noopener">basemap.at</a>'});
+map2 = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {...tileOpts, maxZoom:20, subdomains:"abcd",
+  attribution:'<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a> © CARTO'});
 
-const map = L.map("map", {zoomControl:false, minZoom:3, maxZoom:20, worldCopyJump:true, layers:[satellitMitNamen]});
-L.control.zoom({position:"topright"}).addTo(map);
-L.control.layers(
-  {"Satellit mit Ortsnamen":satellitMitNamen, "Satellit":satellit, "Straßenkarte":strasse},
-  {"Österreich in Höchstauflösung":basemapAT},
-  {position:"topright", collapsed:false}
-).addTo(map);
-L.control.scale({imperial:false, position:"bottomright"}).addTo(map);
+const map = L.map("map", {
+  zoomControl:false, minZoom:2, maxZoom:19, zoomSnap:0.25, zoomDelta:0.75, wheelPxPerZoomLevel:110,
+  worldCopyJump:true, maxBounds:[[-80,-220],[85,220]], maxBoundsViscosity:0.7, layers:[sat]
+});
+map.attributionControl.setPrefix(false);
 
 // ---------------------------------------------------------------
 // Pins
 // ---------------------------------------------------------------
 const cluster = L.markerClusterGroup({
-  showCoverageOnHover:false, maxClusterRadius:45, spiderfyOnMaxZoom:true,
-  iconCreateFunction: c => L.divIcon({html:`<div>${c.getChildCount()}</div>`, className:"cluster", iconSize:[38,38]})
+  chunkedLoading:true, removeOutsideVisibleBounds:true, showCoverageOnHover:false, spiderfyOnMaxZoom:true,
+  maxClusterRadius: z => z < 4 ? 70 : z < 8 ? 55 : 40,
+  spiderLegPolylineOptions:{weight:1.5, color:"#fff", opacity:.8},
+  iconCreateFunction: c => {
+    const n = c.getChildCount(), s = n < 10 ? 34 : n < 50 ? 40 : 48;
+    return L.divIcon({html:`<div>${n}</div>`, className:"cl", iconSize:[s, s]});
+  }
 });
 map.addLayer(cluster);
-PINS.forEach(d => {
-  d.marker = L.marker([d.lat, d.lon], {
-    icon: L.divIcon({className:"pin-icon", html:`<span style="--c:${d.film.color}"></span>`, iconSize:[24,24], iconAnchor:[12,12]}),
-    keyboard:true, title:`${d.name} – ${d.film.title}`
-  }).bindTooltip(`${d.film.title} (${d.film.year})`, {direction:"top", offset:[0,-12]})
-    .on("click", () => openCard(d));
+
+PINS.forEach(p => {
+  p.marker = L.marker([p.lat, p.lon], {
+    icon: L.divIcon({className:"pin", html:`<i style="--c:${p.film.color}"></i>`, iconSize:[22, 22], iconAnchor:[11, 11]}),
+    keyboard:true, title:p.film.title, riseOnHover:true
+  })
+  .bindTooltip(`${p.film.title} <small>${p.film.year}</small>`, {direction:"top", offset:[0, -12], className:"tt", opacity:1})
+  .on("click", () => openFilm(p.film, p));
 });
 
-let activeFilm = null, query = "", country = "", activePin = null;
-const sel = document.getElementById("country");
-COUNTRIES.forEach(c => sel.add(new Option(c, c)));
+// ---------------------------------------------------------------
+// Zustand & Filter
+// ---------------------------------------------------------------
+let collection = COLLECTIONS[0], filmOnly = null, current = null, currentPin = null;
 
-function pinMatches(d){
-  const q = query.toLowerCase();
-  return (!activeFilm || d.film.id === activeFilm) &&
-         (!country || d.country === country) &&
-         (!q || d.film.title.toLowerCase().includes(q) || d.name.toLowerCase().includes(q));
+function visiblePins(){
+  return PINS.filter(p => collection.test(p.film) && (!filmOnly || p.film === filmOnly));
 }
-function fitTo(pins){
-  if (!pins.length) return;
-  map.flyToBounds(L.latLngBounds(pins.map(d => [d.lat, d.lon])), {padding:[60,60], maxZoom:16, duration:1.2});
-}
-function applyFilter(fly){
-  const pins = PINS.filter(pinMatches);
+function applyFilter(){
+  const pins = visiblePins();
   cluster.clearLayers();
-  cluster.addLayers(pins.map(d => d.marker));
-  if (fly) fitTo(pins);
+  cluster.addLayers(pins.map(p => p.marker));
+  const films = new Set(pins.map(p => p.film)).size;
+  $("count").textContent = `${films} ${films === 1 ? "Film" : "Filme"} an ${pins.length} Drehorten`;
+  return pins;
+}
+
+// Sichtbaren Kartenbereich um das Panel herum berechnen
+const isMobile = () => matchMedia("(max-width:760px)").matches;
+function viewPadding(){
+  const open = document.body.classList.contains("panel-open");
+  if (isMobile()) return {tl:[30, 150], br:[30, open ? innerHeight * 0.68 + 30 : 60]};
+  return {tl:[440, 60], br:[open ? 420 + 60 : 80, 60]};
+}
+function fitPins(pins, maxZoom = 13){
+  if (!pins.length) return;
+  const b = L.latLngBounds(pins.map(p => [p.lat, p.lon]));
+  const pad = viewPadding();
+  map.flyToBounds(b, {paddingTopLeft:pad.tl, paddingBottomRight:pad.br, maxZoom, duration:1.1, easeLinearity:.2});
+}
+function flyToPin(p, zoom){
+  const pad = viewPadding();
+  const z = zoom ?? Math.max(map.getZoom(), 15);
+  const offX = (pad.br[0] - pad.tl[0]) / 2, offY = (pad.br[1] - pad.tl[1]) / 2;
+  const target = map.unproject(map.project([p.lat, p.lon], z).add([offX, offY]), z);
+  map.flyTo(target, z, {duration:1.2, easeLinearity:.2});
 }
 
 // ---------------------------------------------------------------
-// Filmliste
+// Sammlungen (Chips)
 // ---------------------------------------------------------------
-const list = document.getElementById("films");
-function renderList(){
-  const q = query.toLowerCase();
-  const films = FILMS.filter(f =>
-    (!country || f.countries.includes(country)) &&
-    (!q || f.title.toLowerCase().includes(q) || f.places.some(p => p.name.toLowerCase().includes(q))));
-  list.innerHTML = "";
-  if (!films.length){ list.innerHTML = '<li class="empty">Kein Treffer. Versuch es mit einem Filmtitel, einer Stadt oder wähle „Alle Länder“.</li>'; return; }
-  [...films].sort((a,b) => a.year - b.year).forEach(f => {
-    const n = f.places.filter(p => !country || p.country === country).length;
-    const li = document.createElement("li");
-    li.innerHTML = `<button class="film" style="--c:${f.color}" aria-pressed="${activeFilm===f.id}"><span class="dot"></span><span><span class="ft">${f.title}</span><br><span class="fy">${f.year} · ${f.countries.join(", ")}</span></span><span class="cnt">${n} ${n===1?"Ort":"Orte"}</span></button>`;
-    li.firstChild.onclick = () => selectFilm(activeFilm === f.id ? null : f.id);
-    list.appendChild(li);
-  });
+COLLECTIONS.forEach(c => {
+  const b = document.createElement("button");
+  b.className = "chip"; b.textContent = c.label; b.dataset.id = c.id;
+  b.setAttribute("aria-pressed", c === collection);
+  b.onclick = () => setCollection(c, true);
+  $("chips").appendChild(b);
+});
+function setCollection(c, fit){
+  collection = c; filmOnly = null; closePanel(false);
+  document.querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", b.dataset.id === c.id));
+  const pins = applyFilter();
+  if (fit) c.id === "alle" ? map.flyTo([38, -30], 2.75, {duration:1.1}) : fitPins(pins, 8);
 }
-function selectFilm(id){
-  activeFilm = id; closeCard(); renderList();
-  if (id) { applyFilter(true); openFilm(FILMS.find(f => f.id === id)); }
-  else { applyFilter(false); fitTo(PINS.filter(pinMatches)); }
-}
-document.getElementById("q").addEventListener("input", e => { query = e.target.value.trim(); renderList(); applyFilter(false); });
-sel.addEventListener("change", e => { country = e.target.value; activeFilm = null; closeCard(); renderList(); applyFilter(true); });
-document.getElementById("reset").onclick = () => {
-  query = ""; country = ""; document.getElementById("q").value = ""; sel.value = ""; selectFilm(null);
-};
 
 // ---------------------------------------------------------------
-// Infokarte
+// Detail-Panel
 // ---------------------------------------------------------------
-const card = document.getElementById("card");
-const $ = id => document.getElementById(id);
-
-// Filmübersicht anzeigen; pin = angeklickter Drehort (optional)
-function openFilm(f, pin){
-  if (activePin) activePin.marker.getElement()?.classList.remove("active");
-  activePin = pin || null;
+const panel = $("panel");
+const setHash = h => { try { history.replaceState(null, "", h); } catch (e) {} };
+function openFilm(f, pin, opts = {}){
+  if (currentPin) currentPin.marker.getElement()?.classList.remove("active");
+  current = f; currentPin = pin || null;
   if (pin) pin.marker.getElement()?.classList.add("active");
 
-  card.style.setProperty("--c", f.color);
-  $("cTitle").textContent = f.title;
-  $("cMeta").textContent = [f.year, f.genre, f.countries.join(", ")].filter(Boolean).join(", ");
-  $("cDesc").textContent = f.beschreibung || "";
-  $("cDesc").hidden = !f.beschreibung;
-  $("cRegie").textContent = f.regie || "–";
-  $("cCast").textContent = f.cast || "–";
+  panel.style.setProperty("--c", f.color);
+  $("pReihe").textContent = f.reihe || ""; $("pReihe").hidden = !f.reihe;
+  $("pTitle").textContent = f.title;
+  $("pMeta").textContent = [f.year, f.genre].filter(Boolean).join(", ");
+  $("pDesc").textContent = f.beschreibung || ""; $("pDesc").hidden = !f.beschreibung;
+  $("pRegie").textContent = f.regie || "–";
+  $("pCast").textContent = f.cast || "–";
+  $("pCountries").textContent = f.countries.join(", ");
 
-  $("cHere").hidden = !pin;
+  $("pHere").hidden = !pin;
   if (pin) {
-    $("cPlace").textContent = "Drehort: " + pin.name;
-    $("cScene").textContent = pin.scene;
-    $("cLink").href = `https://www.google.com/maps/search/?api=1&query=${pin.lat},${pin.lon}`;
+    $("pPlace").textContent = pin.name;
+    $("pScene").textContent = pin.scene;
+    $("pMaps").href = `https://www.google.com/maps/search/?api=1&query=${pin.lat},${pin.lon}`;
   }
 
-  const others = PINS.filter(p => p.film === f && p !== pin);
-  $("cOthersWrap").hidden = !others.length;
-  $("cOthersTitle").textContent = pin ? "Weitere Drehorte dieses Films" : "Drehorte dieses Films";
-  const ul = $("cOthers"); ul.innerHTML = "";
-  others.forEach(p => {
+  const n = f.places.length;
+  $("pListH").textContent = n === 1 ? "Drehort" : `Alle ${n} Drehorte`;
+  const ul = $("pList"); ul.innerHTML = "";
+  PINS.filter(p => p.film === f).forEach(p => {
     const li = document.createElement("li"), b = document.createElement("button");
-    b.innerHTML = `${p.name} <span>(${p.country})</span>`;
-    b.onclick = () => showPin(p);
+    if (p === pin) b.setAttribute("aria-current", "true");
+    b.innerHTML = `<span class="pl-dot"></span><span class="pl-name"></span><span class="pl-country"></span>`;
+    b.querySelector(".pl-name").textContent = p.name;
+    b.querySelector(".pl-country").textContent = p.country;
+    b.onclick = () => goToPin(p);
     li.appendChild(b); ul.appendChild(li);
   });
-  card.scrollTop = 0;
-  card.classList.add("open");
-}
-function openCard(d){ openFilm(d.film, d); }
 
-// Zu einem Drehort fliegen und ihn öffnen
-function showPin(p){
-  if (!cluster.hasLayer(p.marker)) { query = ""; country = ""; $("q").value = ""; sel.value = ""; applyFilter(false); renderList(); }
-  map.flyTo([p.lat, p.lon], 16, {duration:1.2});
-  map.once("moveend", () => cluster.zoomToShowLayer(p.marker, () => openFilm(p.film, p)));
+  $("pBody").scrollTop = 0;
+  document.body.classList.add("panel-open");
+  panel.setAttribute("aria-hidden", "false");
+  setHash("#" + f.id + (pin ? "/" + pin.idx : ""));
+  if (opts.fit) fitPins(PINS.filter(p => p.film === f), 12);
 }
-function closeCard(){
-  card.classList.remove("open");
-  if (activePin) activePin.marker.getElement()?.classList.remove("active");
-  activePin = null;
+function closePanel(resetFilter = true){
+  if (currentPin) currentPin.marker.getElement()?.classList.remove("active");
+  current = currentPin = null;
+  document.body.classList.remove("panel-open");
+  panel.setAttribute("aria-hidden", "true");
+  setHash(location.pathname + location.search);
+  if (resetFilter && filmOnly) { filmOnly = null; applyFilter(); }
 }
-$("cZoom").onclick = e => { e.preventDefault(); if (activePin) map.flyTo([activePin.lat, activePin.lon], 18, {duration:1.5}); };
-document.getElementById("close").onclick = closeCard;
-map.on("click", closeCard);
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeCard(); });
+function goToPin(p){
+  if (!cluster.hasLayer(p.marker)) { filmOnly = p.film; applyFilter(); }
+  openFilm(p.film, p);
+  flyToPin(p);
+  map.once("moveend", () => {
+    if (!map.hasLayer(p.marker)) cluster.zoomToShowLayer(p.marker, () => p.marker.getElement()?.classList.add("active"));
+    else p.marker.getElement()?.classList.add("active");
+  });
+}
+function showFilm(f){
+  filmOnly = f; applyFilter();
+  openFilm(f, null, {fit:true});
+}
 
-// Anzahl im Untertitel anzeigen
-$("sub").textContent = `${FILMS.length} Filme, ${PINS.length} Drehorte in ${COUNTRIES.length} Ländern – auf echten Satellitenbildern. Film wählen oder direkt auf der Karte stöbern.`;
+$("close").onclick = () => closePanel();
+$("pZoom").onclick = () => currentPin && flyToPin(currentPin, 18);
+map.on("click", () => { closeResults(); if (current) closePanel(); });
 
-// Start: ganz Europa mit allen Orten
-map.fitBounds(L.latLngBounds(PINS.map(d => [d.lat, d.lon])), {padding:[40,40]});
-renderList();
-applyFilter(false);
+// Mobil: Panel nach unten wischen zum Schließen
+let touchY = null;
+panel.addEventListener("touchstart", e => { if ($("pBody").scrollTop <= 0) touchY = e.touches[0].clientY; }, {passive:true});
+panel.addEventListener("touchmove", e => {
+  if (touchY === null || !isMobile()) return;
+  const dy = e.touches[0].clientY - touchY;
+  if (dy > 0) { panel.style.transition = "none"; panel.style.transform = `translateY(${dy}px)`; }
+}, {passive:true});
+panel.addEventListener("touchend", e => {
+  if (touchY === null) return;
+  const dy = e.changedTouches[0].clientY - touchY; touchY = null;
+  panel.style.transition = ""; panel.style.transform = "";
+  if (dy > 90) closePanel();
+});
+
+// ---------------------------------------------------------------
+// Suche
+// ---------------------------------------------------------------
+const input = $("q"), results = $("results"), search = $("search");
+let items = [], sel = -1, debounce;
+
+function score(key, q){
+  if (key.startsWith(q)) return 3;
+  if (key.includes(" " + q)) return 2;
+  return key.includes(q) ? 1 : 0;
+}
+function runSearch(){
+  const q = norm(input.value.trim());
+  search.classList.toggle("has-text", !!q);
+  if (!q) { closeResults(); return; }
+  const films = FILMS.map(f => ({type:"film", f, s:score(norm(f.title), q) * 2 || score(f.key, q)}))
+    .filter(x => x.s).sort((a, b) => b.s - a.s || b.f.year - a.f.year).slice(0, 7);
+  const places = PINS.map(p => ({type:"place", p, s:score(p.key, q)}))
+    .filter(x => x.s).sort((a, b) => b.s - a.s).slice(0, 5);
+  items = [...films, ...places];
+  sel = items.length ? 0 : -1;
+  renderResults();
+}
+function renderResults(){
+  results.innerHTML = "";
+  if (!items.length) {
+    results.innerHTML = '<li class="empty">Kein Treffer. Versuch es mit einem Filmtitel, einer Stadt oder einem Regisseur.</li>';
+  }
+  items.forEach((it, i) => {
+    const li = document.createElement("li");
+    li.setAttribute("role", "option");
+    li.setAttribute("aria-selected", i === sel);
+    if (it.type === "film") {
+      li.style.setProperty("--c", it.f.color);
+      li.innerHTML = `<span class="r-dot"></span><span class="r-text"><span class="r-title"></span><span class="r-sub"></span></span>`;
+      li.querySelector(".r-title").textContent = it.f.title;
+      li.querySelector(".r-sub").textContent = `${it.f.year}${it.f.regie ? ", " + it.f.regie : ""}`;
+    } else {
+      li.innerHTML = `<svg class="r-pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span class="r-text"><span class="r-title"></span><span class="r-sub"></span></span>`;
+      li.querySelector(".r-title").textContent = it.p.name;
+      li.querySelector(".r-sub").textContent = `${it.p.film.title}, ${it.p.country}`;
+    }
+    li.onmousedown = e => { e.preventDefault(); choose(it); };
+    results.appendChild(li);
+  });
+  search.classList.add("open");
+  input.setAttribute("aria-expanded", "true");
+}
+function closeResults(){
+  search.classList.remove("open");
+  input.setAttribute("aria-expanded", "false");
+}
+function choose(it){
+  closeResults(); input.blur();
+  if (collection.id !== "alle") { collection = COLLECTIONS[0]; document.querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", b.dataset.id === "alle")); filmOnly = null; applyFilter(); }
+  if (it.type === "film") showFilm(it.f); else goToPin(it.p);
+}
+input.addEventListener("input", () => { clearTimeout(debounce); debounce = setTimeout(runSearch, 60); });
+input.addEventListener("focus", () => input.value.trim() && runSearch());
+input.addEventListener("blur", () => setTimeout(closeResults, 120));
+input.addEventListener("keydown", e => {
+  if (!search.classList.contains("open")) return;
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    e.preventDefault();
+    sel = (sel + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+    renderResults();
+    results.children[sel]?.scrollIntoView({block:"nearest"});
+  } else if (e.key === "Enter" && items[sel]) { choose(items[sel]); }
+});
+$("clear").onclick = () => { input.value = ""; search.classList.remove("has-text"); closeResults(); input.focus(); };
+
+// ---------------------------------------------------------------
+// Steuerung
+// ---------------------------------------------------------------
+$("zin").onclick = () => map.zoomIn(1);
+$("zout").onclick = () => map.zoomOut(1);
+document.querySelectorAll("[data-layer]").forEach(b => b.onclick = () => {
+  const toSat = b.dataset.layer === "sat";
+  if (toSat && !map.hasLayer(sat)) { map.addLayer(sat); map.removeLayer(map2); }
+  if (!toSat && !map.hasLayer(map2)) { map.addLayer(map2); map.removeLayer(sat); }
+  document.querySelectorAll("[data-layer]").forEach(x => x.setAttribute("aria-pressed", x === b));
+});
+document.querySelectorAll("[data-region]").forEach(b => b.onclick = () => {
+  const r = b.dataset.region;
+  if (r === "welt") map.flyTo([30, -10], 2.5, {duration:1.1});
+  else map.flyToBounds(REGIONS[r], {duration:1.1, paddingTopLeft:[40, 40], paddingBottomRight:[40, 40]});
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { if (search.classList.contains("open")) closeResults(); else if (current) closePanel(); }
+  if (e.key === "/" && document.activeElement !== input) { e.preventDefault(); input.focus(); }
+});
+
+// ---------------------------------------------------------------
+// Start
+// ---------------------------------------------------------------
+applyFilter();
+map.fitBounds(REGIONS.europa, {animate:false});
+const [hid, hpin] = decodeURIComponent(location.hash.slice(1)).split("/");
+if (byId[hid]) {
+  const f = byId[hid], p = hpin !== undefined ? PINS.find(x => x.film === f && x.idx === +hpin) : null;
+  setTimeout(() => p ? goToPin(p) : showFilm(f), 250);
+}
+})();
 </script>
 </body>
 </html>
